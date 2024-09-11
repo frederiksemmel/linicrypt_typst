@@ -24,6 +24,8 @@
 #let Vp = $bb("F")^d$
 #let Vd = $(bb("F")^d)^*$
 
+#let Cjoin = $cal("C")_"join"$
+
 // crypto
 #let Att = $cal("A")$
 #let Adv = $sans("adv")$

@@ -1283,18 +1283,18 @@ Call this program $#P _"join"$.
 We can look at a map $f$ that has as its image the states in $FF^(2d)$ where the output
 of $#P _"join"$ has both halves equal. i.e.:
 $
-  OO_"join" = mat(OO_1; OO_2), quad CC_"join" = CC_1 union CC_2, quad Fixing_"join" = Fixing_1 + Fixing_2 \
+  OO_"join" = mat(OO_1; OO_2), quad Cjoin = CC_1 union CC_2, quad Fixing_"join" = Fixing_1 + Fixing_2 \
   f: ker(OO _1 - OO _2) arrow.hook FF^(2d)
 $
 We define $Proj_1$ and $Proj_2$ to be the projections from $F^(2d)$ to either the first n dimensions or the second n.
 So $Proj_1$ and $Proj_2$ recover the solutions to $CC$ from the first $n$ variables, or the second $n$ variables respectively.
 
-Then finding a $vv in sol(CC_"join" f)$ with $vv in.not ker(Proj_1 - Proj_2)$ means finding collision for $#P$.
+Then finding a $vv in sol(Cjoin f)$ with $vv in.not ker(Proj_1 - Proj_2)$ means finding collision for $#P$.
 
 #corollary("Collisions in general")[
-  $CC_"join" f$ is solvable outside of $ker(Proj_1 - Proj_2)$
+  $Cjoin f$ is solvable outside of $ker(Proj_1 - Proj_2)$
   is equivalent to $PP$ being susceptible to an easy attack against collision resistance.
-]
+]<corollary-cr>
 
 Now that we have a formal definition of solutions outside of a subspace,
 we can try to prove it.
@@ -1302,14 +1302,14 @@ we can try to prove it.
 #sketch[
   Assume that #Att finds a solution easily.
   Easy means with a higher probability than in the unsolvability theorem.
-  Then that theorem gives us a map $g: U -> ker(OO_1 - OO_2)$ such that $CC_"join" f g$
+  Then that theorem gives us a map $g: U -> ker(OO_1 - OO_2)$ such that $Cjoin f g$
   is solvable and $im(g) subset.eq.not ker(Proj_1 - Proj_2)$.
-  So a solution to $CC_"join" f g$ is a solution to $CC_"join"$ when mapped by $f g$.
-  Let $vv$ be such a solution to $CC_"join"$ with $vv in.not ker(Proj_1 - Proj_2)$.
+  So a solution to $Cjoin f g$ is a solution to $Cjoin$ when mapped by $f g$.
+  Let $vv$ be such a solution to $Cjoin$ with $vv in.not ker(Proj_1 - Proj_2)$.
   By construction then $Proj_1 vv$ and $Proj_2 vv$ are solutions to $CC$ with $Proj_1 vv != Proj_2 vv$.
 
-  On the reverse side, assume there is such an $g$ as above because $CC_"join" f$ is solvable outside of $ker(Proj_1 - Proj_2)$.
-  Then computing solutions to $CC_"join"$ takes at most $2n$ queries to $H$.
+  On the reverse side, assume there is such an $g$ as above because $Cjoin f$ is solvable outside of $ker(Proj_1 - Proj_2)$.
+  Then computing solutions to $Cjoin$ takes at most $2n$ queries to $H$.
   As before, a solution outside of $ker(Proj_1 - Proj_2)$ leads to a collision.
   This means we have found an attack on collision resistance.
 ]
@@ -1328,139 +1328,21 @@ we can try to prove it.
 
 === Examples
 
-In @TCC:McQSwoRos19 the authors describe a Linicrypt program which is not collision resistant due to collapse of constraints.
-#align(center + horizon)[
-  #grid(
-    columns: 2,
-    gutter: 2em,
-    algo(
-      // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
-      header: $underline(#P (x,y))$,
-      line-numbers: false, inset: 0.7em, fill: none, block-align: left,
-    )[
-      $a_1 &:= H(x)$ \
-      $a_2 &:= H(a_1)$ \
-      $a_3 &:= H(y)$ \
-      return $a_2 - a_3$
-    ],
-    algo(
-      header: $underline(sans("Algebraic Representation of ") #P (x,y))$,
-      line-numbers: false,
-      inset: 0.7em,
-      fill: none,
-      stroke: 0pt,
-      block-align: left,
-    )[
-      #v(0.5em)
-      $bold(O) &:= mat(0,0,0,1,-1) \
-        bold(I) &:= mat(1,0,0,0,0;
-                       0,1,0,0,0)$ \
-      $#C = {
-        &mat(1,0,0,0,0) &|-> mat(0,0,1,0,0), \
-        &mat(0,0,1,0,0) &|-> mat(0,0,0,1,0), \
-        &mat(0,1,0,0,0) &|-> mat(0,0,0,0,1)
-      }$
-    ],
-  )
-]
+See [https://github.com/frederiksemmel/linicrypt] for examples in the ideal cipher model and in the random oracle model.
+That repository contains
+- An implementation of the CR charaterization from #ref(<corollary-cr>)
+- Building the Merkle Damgard construction from PGV compression functions
+- It reproduces the CR and 2PR charaterization from BRS, including the secure & insecure functions of type 'B'
+- It confirms that the example $P(x,y) = H(H(x)) - H(y)$ is not CR but it is 2PR
 
-We define $OO_1, OO_2, CC_1, CC_2, Proj_1$ and $Proj_2$ as in the corollary.
-$
-  CC_"join" = {
-    &mat(1,0,0,0,0,0,0,0,0,0) &|-> mat(0,0,1,0,0,0,0,0,0,0), \
-    &mat(0,0,1,0,0,0,0,0,0,0) &|-> mat(0,0,0,1,0,0,0,0,0,0), \
-    &mat(0,1,0,0,0,0,0,0,0,0) &|-> mat(0,0,0,0,1,0,0,0,0,0), \
-    &mat(0,0,0,0,0,1,0,0,0,0) &|-> mat(0,0,0,0,0,0,0,1,0,0), \
-    &mat(0,0,0,0,0,0,0,1,0,0) &|-> mat(0,0,0,0,0,0,0,0,1,0), \
-    &mat(0,0,0,0,0,0,1,0,0,0) &|-> mat(0,0,0,0,0,0,0,0,0,1), \
-    }
-$
-Let $f$ be the empedding of the subspace $ker(OO_1 - OO_2)$ into #Vp.
-This linear map can be described by a matrix $MM_f$ of dimension $10 times 9$ if we just choose a basis of $ker(OO_1 - OO_2)$.
-$
-  MM_f = mat(
-     1, 0, 0, 0, 0, 0, 0, 0, 0;
-     0, 1, 0, 0, 0, 0, 0, 0, 0;
-     0, 0, 1, 0, 0, 0, 0, 0, 0;
-     0, 0, 0, 1, 0, 0, 0, 0, 1;
-     0, 0, 0, 1, 0, 0, 0, 0, 0;
-     0, 0, 0, 0, 1, 0, 0, 0, 0;
-     0, 0, 0, 0, 0, 1, 0, 0, 0;
-     0, 0, 0, 0, 0, 0, 1, 0, 0;
-     0, 0, 0, 0, 0, 0, 0, 1, 1;
-     0, 0, 0, 0, 0, 0, 0, 1, 0;
-  )
-$
-
-This matrix has been constructed by first choosing a basis of $ker(O)$ and mapping it
-to $FF^(2d)$ by setting the first resp. second halve to 0.
-These make up 6 basis vectors.
-The last basis vector is chosen to be linear independent of the rest
-while still being in $ker(Proj_1 - Proj_2) subset.eq ker(OO_1 - OO_2)$.
-
-This linear map leads to the partially collapsed constraints:
-$
-  CC_"join" MM_f = {
-    &mat(1,0,0,0,0,0,0,0,0) |-> mat(0,0,1,0,0,0,0,0,0)&, \
-    &mat(0,0,1,0,0,0,0,0,0) |-> mat(0,0,0,1,0,0,0,0,1)&, \
-    &mat(0,1,0,0,0,0,0,0,0) |-> mat(0,0,0,1,0,0,0,0,0)&, \
-    &mat(0,0,0,0,1,0,0,0,0) |-> mat(0,0,0,0,0,0,1,0,0)&, \
-    &mat(0,0,0,0,0,0,1,0,0) |-> mat(0,0,0,0,0,0,0,1,1)&, \
-    &mat(0,0,0,0,0,1,0,0,0) |-> mat(0,0,0,0,0,0,0,1,0)& }
-$
-These constraints are not solvable anymore,
-as the set of answer vectors alone is not linearly independent.
-
-But they can be solved by further collapsing variables.
-We can collapse the answer vectors of lines 2 and 3,
-i.e. we collapse $f^*(aa^1_2)$ with $f^*(aa^1_3)$.
-(Here I write $aa^i_j$ for the j'th answer vector $aa_j$ of the original
-$PP$ either in the first or second half of #Vp depending on $i in {1,2}$.)
-So we construct a map going to the subspace where these vectors collapse.
-This is $ker(mat(0,0,0,1,0,0,0,0,1) - mat(0,0,0,1,0,0,0, 0,0)) = ker(mat(0,0,0,0,0,0,0,0,1))$.
-
-#remark[
-  Its interesting that $f^*(bold(o)_1) = f^*(bold(o)_2) = mat(0,0,0,0,0,0,0,0,1)$.
-  So collapsing these two constraints is the same as setting the output to 0.
-  In this case this makes sense,
-  because 0 is the only output for which it is hard to find a collision.
-]
-
-Looking back at the original linicrypt program,
-this subspace are the states of the program for which the query $H(y)$ and $H(H(x))$ collapse.
-
-Let $g: ker(aa^1_2 - aa^1_3) sect ker(OO_1 - OO_2) arrow.hook Vp$ be the embedding.
-Then a matrix representing this map is
-$
-  MM_f = mat(
-     1, 0, 0, 0, 0, 0, 0, 0;
-     0, 1, 0, 0, 0, 0, 0, 0;
-     0, 0, 1, 0, 0, 0, 0, 0;
-     0, 0, 0, 1, 0, 0, 0, 0;
-     0, 0, 0, 1, 0, 0, 0, 0;
-     0, 0, 0, 0, 1, 0, 0, 0;
-     0, 0, 0, 0, 0, 1, 0, 0;
-     0, 0, 0, 0, 0, 0, 1, 0;
-     0, 0, 0, 0, 0, 0, 0, 1;
-     0, 0, 0, 0, 0, 0, 0, 1;
-  )
-$
-
-Only the last column is removed versus $MM_f$ because it lies outside of $ker(aa^1_2 - aa^1_3)$.
-The collapsed set of constraints becomes:
-$
-  CC_"join" MM_g = {
-    &mat(1,0,0,0,0,0,0,0) |-> mat(0,0,1,0,0,0,0,0)&, \
-    &mat(0,0,1,0,0,0,0,0) |-> mat(0,0,0,1,0,0,0,0)&, \
-    &mat(0,1,0,0,0,0,0,0) |-> mat(0,0,0,1,0,0,0,0)&, \
-    &mat(0,0,0,0,1,0,0,0) |-> mat(0,0,0,0,0,0,1,0)&, \
-    &mat(0,0,0,0,0,0,1,0) |-> mat(0,0,0,0,0,0,0,1)&, \
-    &mat(0,0,0,0,0,1,0,0) |-> mat(0,0,0,0,0,0,0,1)& }
-$
+It gives a natural attack characerization: Each left-right symmetric set partition of $Cjoin$ is an attack type.
+These attack types overlap mostly with previous categorizations, and for the differences this Lincicrypt characterization is arguably better.
 
 
-
-The running example from @TCC:McQSwoRos19 is
+TODO flesh out these ideas:
+- All CR attacks on a Linicrypt program are given by considering the subspaces of $ker(OO_1 - OO_2)$
+  in which the constraints of $f^*(Cjoin)$ collapse.
+  For each subspace, if the 
 
 == Notes and ideas, in random order
 - Second preimage resistance and collision resistance loose their relationsship for unsolvable constraints.
@@ -1511,20 +1393,43 @@ The running example from @TCC:McQSwoRos19 is
     it would be ok to start computing constraints without knowing all the input.
     This is the case for merkle damgard for example.
 
+= Meeting Notes
+
+== Meeting 28.08.2024
+- Results from the experiments
+  - PGV BRS categorization
+  - Overview implementation, interesting parts
+- Maximal attacks & set partitions
+- Towards proof of original conjecture
+  - Issue with collapse of different constraints in left and right program
+  - Symmetric attacks, always present? Set partition join of attacks?
+- Discuss possibel applications of corollary:
+  - Better categorization of all PGV compression functions in MD construction
+  - Model the fixed point weekness of the random oracle from PGV -> Aren't all programs then vulnerable?
+    - Maybe some programs force collapse to $mat(0) |-> mat(0)$ ($H(0) = 0$) and some only $mat(1) |-> mat(1) $ ($H(x) = x$)
+  - Start a search for best compression function from ideal ciphers
+
+== Meeting 11.09.2024
+- No work these two weeks, only lots of excuses :)
+- Timeline paper. October 3 not possible...
+  - Submission deadline Crypto 2025 in February seems good
+
+- Formal conferences is TCC and Eurocrypt
+  - TCC in deadline in May probably
+  - Crypto is usually more real application focused, would need to find a really good application for that
+
 = Next steps
 
-The SymPy Linicrypt implementation has shown a lot of potential.
-I want to continue this path a bit more because it will help a lot with
-generating interesting applications of the theory.
-The todo-list might go like this:
-- Implement the collapse attack.
-  Currently, I tested only the SymPy equations for cycling the constraints.
-- Generate a Linicrypt-driven categorization of the attacks
+== Attack side
+=== Short term
+- Try to model fixed point attacks like this.
+  Additionally to the solvability rules we add: $mat(xx) -> mat(xx)$ is solvable fixing $Fixing$ if $xx$ is not in $Fixing$ 
+- Apply this to the PGV compression functions and see which are insecure
+
+== Longer term
+- derive a linicrypt categorization of the pgv functions
 
 
-This is the Todo list for everything related to the security side:
-- Write down the proof attempt for the security side of #ref(<conjecture-no-nonces-v2>)
-- Continue work on the security side: What can we say about unsolvable #C? Can this help to generalize the security proofs?
-- Maybe (and this is a big maybe) we can then base the security proofs on weaker conditions than the Random Oracle Model.
-  What are the exact requirements on $H$ such that unsolvable constraints #C are "hard" to solve?
-- Start to work on the "unsolvable #C = loops in #C" idea.
+
+== Security side
+- Formalize proofs of unsolvability and the corollary
