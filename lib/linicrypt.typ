@@ -101,5 +101,5 @@
   - The set of base variables one can get by executing a Linicrypt program #P on all of its inputs is called $#exec[#P]$
   - The set of solutions to a set of constraints #C is called $sol(PP)$
   - The input matrix to #P is called #I and the output matrix is called #O so I will write #PIOC for a Linicrypt program and its algebraic representation
-  - The function that a determinsitic #P computes is called $f_(#P) = bold(O) circle.tiny b_(#P)$
+  - The function that a deterministic #P computes is called $f_(#P) = bold(O) circle.tiny b_(#P)$
 ]

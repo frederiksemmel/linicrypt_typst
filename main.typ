@@ -51,7 +51,7 @@ I want to state the definition of collision structure for these pseudo-algebraic
 
 #remark[
   - The fixed constraints #Cfix and the backwards solvable constraints #Ccs are equivalent to the constraints before and after $i^*$ in the original collision structure definition.
-  - Degeneracy is a natural edge case of this defintion, i.e. $#Ccs = {}$.
+  - Degeneracy is a natural edge case of this definition, i.e. $#Ccs = {}$.
   - The subspace #Fixing corresponds to the variables in #P which we can set freely and still solve the constraints.
     It plays the same role as the $#q _(i^*)$, which is not in the span of previously fixed variables.
 ]
@@ -296,7 +296,7 @@ But it is solvable fixing only $rowsp(#I' #T)$.
 The key thing is that #P#T now has a collision structure!
 
 We can split $#C#T = #Ccs#T union.sq #Cfix#T$ with $#Ccs#T = #C#T$ and $#Cfix#T = {}$.
-If we set $#Fixing = rowsp(mat(1,0,0))$ then we get that #Ccs#T is detereminstically solvable fixing
+If we set $#Fixing = rowsp(mat(1,0,0))$ then we get that #Ccs#T is deterministically solvable fixing
 $
   (rowsp(#Cfix#T) + rowsp(#O#T) plus.circle #Fixing = rowsp(mat(1,0,0)).
 $
@@ -327,7 +327,7 @@ These lead to the expected colliding inputs to #P: $#I#T#vv = mat(x; H(x))$ and 
 == Collapse Attack: One of the 5 broken PGV compression functions in the rate-2 setting
 
 This example should work for any of the 5 compression functions listed in @C:BlaRogShr02 in
-the section "Fatal Attacks on Five of PGV’s B-Labeled Schemes".
+the section "Fatal Attacks on Five of PGV's B-Labeled Schemes".
 
 I will choose the compression function they call $hat(f)_39$ and call it $f$.
 $
@@ -565,7 +565,7 @@ which makes the abstract formulation of the permutation attack from #ref(<conjec
 
 We want to see if the conjecture can correctly reproduce previous classifications of the PGV compression functions.
 Linicrypt can explain most of the previous categorizations,
-xcept for the Permutation attack and the 5 flawed backward attackable functions.
+except for the Permutation attack and the 5 flawed backward attackable functions.
 TODO add a summary of the last section of my master's thesis that goes into detail.
 
 Now I will try to tackle these last missing functions with the help of #ref(<conjecture-no-nonces-v2>).
@@ -575,7 +575,7 @@ $
   f(h,m) = E(c h + d m, e h + f m) + a h + b m
 $
 
-If we see this as a Linicryp program, this is its canonical representation:
+If we see this as a Linicrypt program, this is its canonical representation:
 #align(center)[
   #grid(
     columns: 3,
@@ -881,7 +881,7 @@ General proof idea of #ref(<conjecture-no-nonces-v2>):
   then (a), (b) or (c)
 
 We have:
-- Protocol of $#Att$ interacting with orcale $H$ (or $E$ or $Pi$) with $N$ queries
+- Protocol of $#Att$ interacting with oracle $H$ (or $E$ or $Pi$) with $N$ queries
 - From #vv and #vv' and the protocol we can extract $T, T': #C -> [N]$ when each constraint was determined.
 - We define $#fin (c) = sans("max")(#Ti (c), #Ti' (c))$ for each $c$ in #C.
 - We define #Cfix to be the maximal subset such that $#Ti = #Ti'$ on #Cfix and $#Ccs = #C \\ #Cfix$
@@ -1020,7 +1020,7 @@ A useful fact is that we can avoid working with $Fixing_0$ because of the follow
 ]
 
 In Linicrypt program terms,
-this proposition relates a Linicrypt program with its corresponding inputless Linicrypt program where all inputs are set to 0.
+this proposition relates a Linicrypt program with its corresponding input-less Linicrypt program where all inputs are set to 0.
 
 #proof[
   We define #C, $Fixing_0$, and $LL$ as in the proposition statement.
@@ -1029,7 +1029,7 @@ this proposition relates a Linicrypt program with its corresponding inputless Li
     With a bit of abuse of notation, we can extend this map $LL^*$ to act on constraints.
     Constraints are tuples of matrices.
     The rows of the matrices are in $Vd$,
-    so we can let $LL^*$ act on these structures elementwise.
+    so we can let $LL^*$ act on these structures element-wise.
     Then $LL^* ((QQ, aa)) = (QQ LL, aa LL)$.
 
     TODO: This is useful in multiple places, so it should be discussed outside this proof.
@@ -1088,7 +1088,7 @@ this proposition relates a Linicrypt program with its corresponding inputless Li
 
 This proposition is useful because we can then translate statements about solvability fixing ${0}$ to the more general version.
 In some sense,
-we only need to understand inputless Linicrypt programs to understand all Linicrypt programs.
+we only need to understand input-less Linicrypt programs to understand all Linicrypt programs.
 
 #theorem("Unsolvable constraints -- wrong")[
   Let #C be a set of constraints of dimension $d$ which are not solvable.
@@ -1185,7 +1185,7 @@ TODO more explicit.
 Now we can define a security game for finding solutions to a set of constraints #CC.
 The adversary #Att gets access to the constraints $CC$ of dimension $d$,
 the subspaces $Fixing$ and $W$ of #Vd and #Vp respectively.
-The adversary #Att also gets acces to the oracle $H$ such that we can record its queries.
+The adversary #Att also gets access to the oracle $H$ such that we can record its queries.
 Then the game randomly samples a vector #ii in #Vp (representing the Linicrypt program input) and passes it to #Att.
 It wins the game by outputting a $vv in sol(CC)$ which fulfills $vv - ii in ker(Fixing)$
 and $vv in.not W$.
@@ -1267,9 +1267,9 @@ The probability of #Att winning this game is written as $SolAdv[Att, CC, Fixing,
 ]
 
 
-Maybe we can use a general theorem like the unsolvability theorem to replace the proofs
+Maybe we can use a general theorem like the Unsolvability theorem to replace the proofs
 for collision structure and second preimage characterization.
-The key step in the proof of unsolvability is the same as in those proofs.
+The key step in the proof of Unsolvability is the same as in those proofs.
 
 Let $#P$ be a Linicrypt program.
 We can duplicate its algebraic representation such that the vectors are completely separate.
@@ -1301,7 +1301,7 @@ we can try to prove it.
 
 #sketch[
   Assume that #Att finds a solution easily.
-  Easy means with a higher probability than in the unsolvability theorem.
+  Easy means with a higher probability than in the Unsolvability theorem.
   Then that theorem gives us a map $g: U -> ker(OO_1 - OO_2)$ such that $Cjoin f g$
   is solvable and $im(g) subset.eq.not ker(Proj_1 - Proj_2)$.
   So a solution to $Cjoin f g$ is a solution to $Cjoin$ when mapped by $f g$.
@@ -1330,13 +1330,13 @@ we can try to prove it.
 
 See [https://github.com/frederiksemmel/linicrypt] for examples in the ideal cipher model and in the random oracle model.
 That repository contains
-- An implementation of the CR charaterization from #ref(<corollary-cr>)
+- An implementation of the CR characterization from #ref(<corollary-cr>)
 - Building the Merkle Damgard construction from PGV compression functions
-- It reproduces the CR and 2PR charaterization from BRS, including the secure & insecure functions of type 'B'
+- It reproduces the CR and 2PR characterization from BRS, including the secure & insecure functions of type 'B'
 - It confirms that the example $P(x,y) = H(H(x)) - H(y)$ is not CR but it is 2PR
 
-It gives a natural attack characerization: Each left-right symmetric set partition of $Cjoin$ is an attack type.
-These attack types overlap mostly with previous categorizations, and for the differences this Lincicrypt characterization is arguably better.
+It gives a natural attack characterization: Each left-right symmetric set partition of $Cjoin$ is an attack type.
+These attack types overlap mostly with previous categorizations, and for the differences this Linicrypt characterization is arguably better.
 
 
 TODO flesh out these ideas:
@@ -1345,7 +1345,7 @@ TODO flesh out these ideas:
   For each subspace, if the
 
 == Notes and ideas, in random order
-- Second preimage resistance and collision resistance loose their relationsship for unsolvable constraints.
+- Second preimage resistance and collision resistance loose their relationship for unsolvable constraints.
   We can find unsolvable constraints where its easy to find a second solution, if we are given a solution.
   But its hard to find a solution in the first place.
   This is due to the permutation attack; where the symmetry of the constraints leads to a symmetry in the set of solutions.
@@ -1357,7 +1357,7 @@ TODO flesh out these ideas:
 - The set $sol(CC)$ has interesting structure.
   For matrices permuting constraints $CC BB = CC$ we get a well defined map $BB: sol(CC) -> sol(CC)$.
 
-  For general matrices $LL: FF^(d') -> Vp$ for arbitray $d'$ we get a map $LL: sol(CC LL) -> sol(CC)$.
+  For general matrices $LL: FF^(d') -> Vp$ for arbitrary $d'$ we get a map $LL: sol(CC LL) -> sol(CC)$.
 
   It looks like the set of solutions contains "components",
   where each component is the solution set of the "derived" set of constraints mapped linearly into $Vp$.
@@ -1366,7 +1366,7 @@ TODO flesh out these ideas:
   Then I would expect finding solutions to be easier (less constraints), and we can map them back.
 
 - If the function $H$ allows for fixed points,
-  that opens another can of (intersting) worms.
+  that opens another can of (interesting) worms.
   Because then unsolvable sets become solvable in a limited way.
   $CC = {mat(1) |-> mat(1)}$ is then solvable (fixing ${0}$) because
   $sol(CC)$ are exactly the fixed points ${x | H(x) = x}$.
@@ -1383,15 +1383,15 @@ TODO flesh out these ideas:
   They restrict the valid states of $PP$ in the dimension $ii$.
   We instantiate them with a concrete input $i in FF$: $ii vv = i$.
   This is structurally similar to the random oracle constraint,
-  which is instantiated with a concrete orcle $H$: $H(QQ vv) = aa vv$.
+  which is instantiated with a concrete oracle $H$: $H(QQ vv) = aa vv$.
 
   Benefits:
   - The collapse of the input matrix is now handled by collapse of constraints.
   - We allow extra freedom in the solution ordering which seems more general.
     Previously we kind of require the inputs to $PP$ to be fixed first.
     With lots of programs,
-    it would be ok to start computing constraints without knowing all the input.
-    This is the case for merkle damgard for example.
+    it would be OK to start computing constraints without knowing all the input.
+    This is the case for Merkle Damgard for example.
 
 - Maybe we can simplify the solvable security game.
   Remove fixing and outside parts.
@@ -1407,9 +1407,9 @@ TODO flesh out these ideas:
 - Towards proof of original conjecture
   - Issue with collapse of different constraints in left and right program
   - Symmetric attacks, always present? Set partition join of attacks?
-- Discuss possibel applications of corollary:
+- Discuss possible applications of corollary:
   - Better categorization of all PGV compression functions in MD construction
-  - Model the fixed point weekness of the random oracle from PGV -> Aren't all programs then vulnerable?
+  - Model the fixed point weakness of the random oracle from PGV -> Aren't all programs then vulnerable?
     - Maybe some programs force collapse to $mat(0) |-> mat(0)$ ($H(0) = 0$) and some only $mat(1) |-> mat(1) $ ($H(x) = x$)
   - Start a search for best compression function from ideal ciphers
 
@@ -1431,22 +1431,22 @@ TODO flesh out these ideas:
 - Apply this to the PGV compression functions and see which are insecure
 
 == Longer term
-- derive a linicrypt categorization of the pgv functions
+- derive a Linicrypt categorization of the PGV functions
 
 
 
 == Security side
-- Formalize proofs of unsolvability and the corollary
+- Formalize proofs of Unsolvability and the corollary
 
 = Clean Start
 
 #remark[
-  Here I want to do a clean start in the order of how a paper could be structured.
+  Here I want to do a clean start, this should evolve to the paper text.
 ]
 
 == Abstract
 
-== New constructs for Linincrypt
+== New constructs for Linicrypt
 
 The general direction we take is to generalize the Linicrypt structure and see where that leads to.
 Instead of defining what a Linicrypt program is, and then construct its algebraic representation,
@@ -1458,11 +1458,11 @@ It turns out that cryptographic properties of a program #P can be formulated in 
 
 First we start with basic definitions and notation.
 We will start with a $d$-dimensional vector space over a finite field #F which we write $Vp$.
-This represents the states that a linicrypt program #P with $d$ base variables can be in.
+This represents the states that a Linicrypt program #P with $d$ base variables can be in.
 It's dual space #Vd will play an important role by representing the variables of a program.
 
 Now we define the concept of an oracle constraint.
-This defintion can then be satisfied by different types of constraints like a random oracle constraint or an ideal cipher constraint.
+This definition can then be satisfied by different types of constraints like a random oracle constraint or an ideal cipher constraint.
 
 #definition("Random oracle constraint")[
   Let $H$ be an instance of a random oracle.
@@ -1516,19 +1516,19 @@ We define a new security game that works for any oracle model.
 ]
 
 In order to win $sans("SolGame")$ the adversary has to find a state vector $vv$ in $Vp$ that satisfies 3 conditions:
-1. It is a solution to the constraints $CC$ given an instance of the ordacle
+1. It is a solution to the constraints $CC$ given an instance of the oracle
 2. It has found this solution while keeping the values of the variables in $Fixing$ fixed
 3. The solution lies outside of the subspace $W$
 
 Condition 2. models the ability to specify the input of a Linicrypt program.
 Condition 3. is useful when we look for specific solutions satisfying a linear inequality.
-When we charaterize collision resistance, we will write $vv != vv'$ in terms of a subspace.
+When we characterize collision resistance, we will write $vv != vv'$ in terms of a subspace.
 
 #lemma("solvability of random oracle constraint")[
   Let $c = (qq_1, ..., qq_k, aa)$ be a random oracle constraint and $Fixing$ a subspace of $Vd$.
   We say $c$ is solvable fixing $Fixing$ if $aa$ is not in $Fixing + span(qq_1\, ...\, qq_k)$.
 
-  If $c$ is solvable fixing $Fixing$ then there is a 1-query adversary $Att$ whith
+  If $c$ is solvable fixing $Fixing$ then there is a 1-query adversary $Att$ with
   $
     Pr[sans("SolGame")({c}, Fixing, 0, Att, lambda)] >= 1 - 1 / (|FF|)
   $.
@@ -1545,7 +1545,7 @@ When we charaterize collision resistance, we will write $vv != vv'$ in terms of 
     BB^(-1) = mat(vv_1; ...; vv_(n-1); aa).
   $
   The matrix on the right is invertible, therefore $BB$ is well defined this way.
-  The following Linicript program is the adversary
+  The following Linicrypt program is the adversary
   #algo(
     // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
     header: $underline(Att^H (lambda; xx))$,
@@ -1612,14 +1612,14 @@ but usually it is just the span of all the dual vectors in the constraint.
   Therefore their sum is also contained in the subspace, so $vv_i - xx in ker(Fixing_0)$.
   This means condition 2 is fulfilled.
 
-  Condition 3. is almost always fulfilled exept if all the calls to the oracle return 0 by chance.
+  Condition 3. is almost always fulfilled except if all the calls to the oracle return 0 by chance.
 ]
 
 #remark[
   - This proof works for sets of constraints which are mixed from different oracle models.
   - The program $Att$ can be expressed as a Linicrypt program.
   - What we will later prove is that the reverse of the corollary is also true.
-  This means that any adversary for the $SolGame$ is actually nothing else than a Linirypt program.
+  This means that any adversary for the $SolGame$ is actually nothing else than a Linicrypt program.
 ]
 
 Remark for Zahra and Bruce: I find all of this until here quite complicated for what it is supposed to say.
@@ -1629,7 +1629,7 @@ And this step by step solving is basically a Linicrypt program.
 Well... maybe further iteration makes it simpler.
 
 == Mapping constraints between spaces
-The previous constructs allow us to (more or less) naturally talk about multiple oracle models simulaneously.
+The previous constructs allow us to (more or less) naturally talk about multiple oracle models simultaneously.
 Another benefit is that mappings between constraints are possible and offer further proof methods.
 This means that we can relate the executions of different Linicrypt programs,
 if one can establish a linear map between their algebraic representations.
@@ -1645,7 +1645,7 @@ These two maps have a natural interpretation in the context of Linicrypt program
 Assume $Vp$ is the state space of a program.
 The algebraic representation is a structure living in the dual space of $Vp$,
 i.e. it is a structure composed of the row vectors which represent variables.
-We can use $f^*$ to map the linicyrpt program to a program with state space $W$.
+We can use $f^*$ to map the Linicrypt program to a program with state space $W$.
 When we don't constrain the map $f$ at all,
 this idea becomes very useful because it models the collapse of distinct calls to the oracle.
 
@@ -1727,7 +1727,7 @@ I will use the notation $iota_W$ for the linear map of from a subspace $W$ to it
 ]
 
 Remark Zahra and Bruce: I need to figure out how to make this work while fixing $Fixing$.
-Not neccessary for the CR characterization, but for 2PR it is.
+Not necessary for the CR characterization, but for 2PR it is.
 
 #theorem("Unsolvability")[
   Let #CC be a set of constraints and $W$ a subspace of $Vp$.
@@ -1748,7 +1748,7 @@ Not neccessary for the CR characterization, but for 2PR it is.
   Here $sans("Query")_Ora$ is the space of queries that can be made to the oracle $Ora$.
   It consists of the values $c vv$ for all valid combinations of $Ora$-constraints $c$ and state vectors $vv$.
   We can make some assumptions on $Q$ by modifying $Att$ slightly:
-  1. $Q$ is injective. This is achieved my adding memoization of the queries to $Att$.
+  1. $Q$ is injective. This is achieved my adding memorization of the queries to $Att$.
   2. All the queries $c vv$ are actually in $im(Q)$ for all $c in CC$.
     We simply force $Att$ to actually make the queries $c vv$ before it outputs $vv$.
 
@@ -1765,11 +1765,11 @@ Not neccessary for the CR characterization, but for 2PR it is.
     &> N^n / (|FF|)
   $
   There are $N^n$ possible mappings $CC -> {1, ..., N}$.
-  By the pidgeonhole principle for a specific $T: CC -> {1, ..., N}$
+  By the pigeonhole principle for a specific $T: CC -> {1, ..., N}$
   we must have $Pr[SolGame(CC, 0, W, Att) "and" T "is used"] > 1/ (|FF|)$.
   Let us fix this $T$ for the following.
 
-  This function $T$ might not be injetive, i.e. $Att$ could determine multiple constraints with a single query.
+  This function $T$ might not be injective, i.e. $Att$ could determine multiple constraints with a single query.
 
   We therefore map the constraints to a set of constraints for which this doesn't happen.
   Let
@@ -1779,7 +1779,7 @@ Not neccessary for the CR characterization, but for 2PR it is.
   This is a bit of abuse in notation which we clarify now.
   If $c$ and $c'$ are constraints of different oracle type we set $ker(c-c') = Vp$.
   Otherwise $ker(c - c') = {vv in Vp | c vv = c' vv}$.
-  TODO add what $c vv = c' vv$ means to the definition of $c$ (its just componentwise equaltiy).
+  TODO add what $c vv = c' vv$ means to the definition of $c$ (its just component-wise equality).
 
   Consider the embedding map $f: K -> Vp$. We first assert three statements:
   1. $vv$ is in $K$
@@ -1821,3 +1821,4 @@ Not neccessary for the CR characterization, but for 2PR it is.
   Therefore the probability that $H(q_1, ..., q_k) = aa vv$ is equal to $1 / (|FF|)$.
   This is the contradiction we needed to prove that $CC$ is indeed solvable outside of $W$.
 ]
+
