@@ -34,7 +34,7 @@ We have to allow for the "algebraic representations" #PIOC to be much freer.
 Essentially anything with consistent dimensions should be allowed,
 and all definitions and theorems should still be applicable.
 A triple $(#I, #O, #C)$ is called a "pseudo-algebraic representation" if all the rows of the matrices are in $F^(1 times d)$.
-Then we can use a core lemma that relates the solution spaces $#sol[#C]$
+Then we can use a core lemma that relates the solution spaces $sol(#C)$
 between transformed constraints,
 which follows essentially from the associativity of the matrix product.
 
@@ -57,15 +57,15 @@ I want to state the definition of collision structure for these pseudo-algebraic
 ]
 
 The attack follows from the definition of the collision structure:
-We are given a $#vv in #sol[#C]$.
+We are given a $#vv in sol(#C)$.
 In particular, it also solves $#Cfix$.
 We fix the values for all the dual vectors contained in $rowsp(Cfix) + rowsp(O)$.
 Then we choose any other value than $bold(f)#vv$ for $bold(f) != 0 in #Fixing$.
-By the lemma on the structure of $#sol[#C]$,
+By the lemma on the structure of $sol(#C)$,
 we have a deterministic Linicrypt program computing a solution $#vv'$ for $Ccs$ taking these fixed values as input.
 This solution is our collision,
 as we have $#I#vv != #I#vv'$ (injectivity of #I on the solutions),
-$#vv' in #sol[#C] = #sol[#Ccs] sect #sol[#Cfix] $ (by the definitions)
+$#vv' in sol(#C) = sol(#Ccs) sect sol(#Cfix) $ (by the definitions)
 and $#O#vv = #O#vv'$ (by the choice of $#vv'$).
 
 We can therefore state the following theorem, which combines all the previously described attacks for both the random oracle model, and the ideal cipher model.
@@ -73,9 +73,9 @@ We can therefore state the following theorem, which combines all the previously 
 #theorem[
   Let $(#I , bold(O) , #C)$ be a pseudo-algebraic representation with a collision structure
   $#C = #Ccs union.sq #Cfix$.
-  Assume we already know a $#vv$ in $#sol[#C]$.
+  Assume we already know a $#vv$ in $sol(#C)$.
 
-  Then there is a Linicrypt program that can output a $#vv'$ in $#sol[#C]$ with $#vv != #vv'$ and
+  Then there is a Linicrypt program that can output a $#vv'$ in $sol(#C)$ with $#vv != #vv'$ and
   $#O#vv = #O#vv'$ by making $|#Ccs|$ queries to $H$.
 ]<theorem-collision-structure>
 
@@ -85,14 +85,14 @@ The definition of the solution set (in the ROM) is the following.
   We say a vector $#vv in #F^d$ #strong[solves] $#C$ if
   $#a #vv = H(#Q #vv)$ for all $#Q arrow.r.bar #a$ in $#C$.
   Such a vector $#vv$ is called a #strong[solution] of $#C$.
-  The set of all solutions to $#C$ is denoted by $#solH(C)$.
+  The set of all solutions to $#C$ is denoted by $solH(C)$.
 ]
 
 The definition works for any function $H$,
-and we will just write $#sol[#C]$ and omit the $H$ from the notation.
+and we will just write $sol(#C)$ and omit the $H$ from the notation.
 
 TODO: maybe I should put here the definition for deterministically solvable,
-and the lemma about the structure of $#sol[#C]$.
+and the lemma about the structure of $sol(#C)$.
 
 The central lemma that is used in the conjecture below is:
 
@@ -101,7 +101,7 @@ The central lemma that is used in the conjecture below is:
   let $#T$ be a matrix in $F^(d times d')$ where $d'$ can be arbitrary.
   Then we have
   $
-    #vv in #sol[#C#T] <==> #T#vv in #sol[#C]
+    #vv in sol(#C#T) <==> #T#vv in sol(#C)
   $
 ]<lemma-sol-commutes>
 
@@ -109,11 +109,11 @@ The central lemma that is used in the conjecture below is:
   Let #C and #T be as in the lemma.
   The following equivalences prove the lemma:
   $
-    &#vv in #sol[#C#T] \
+    &#vv in sol(#C#T) \
 <=> &(#a') #vv = H((#Q') #vv) quad forall (#Q', #a') in #C#T \
 <=> &(#a#T) #vv = H((#Q#T) #vv) quad forall (#Q, #a) in #C \
 <=> &#a (#T #vv) = H(#Q (#T #vv)) quad forall (#Q, #a) in #C \
-<=> &#T#vv in #sol[#C]
+<=> &#T#vv in sol(#C)
   $
 ]
 
@@ -140,9 +140,9 @@ The next step would be to try to break the conjecture by finding more complicate
 
 With this formulation there are these issues:
 + For (a), we need that $#C#T$ is solvable,
-  so that we can actually find any #vv in #sol[#C#T]
-+ For (b), we need to be able to find a #vv in #sol[#C#T] with $#B#vv != #vv$
-+ Also, #I#T needs to be injective on #sol[#C#T]
+  so that we can actually find any #vv in sol(#C#T)
++ For (b), we need to be able to find a #vv in sol(#C#T) with $#B#vv != #vv$
++ Also, #I#T needs to be injective on sol(#C#T)
 
 The last two issues are not issues if #T is the identity.
 Then 2. is satisfied because $H$ is assumed to look random,
@@ -179,19 +179,19 @@ then there is a collision resistance attack on #P.
   #C#B can be equal to #C if #B manages to permute the constraints in #C.
 
   Then let #vv be in $sol(#C )$ such that $#B #vv != #vv$.
-  It is possible to find such a #vv with very high probability simply by choosing any #vv randomly out of #sol[#C].
-  If #sol[#C] was contained to any subspace of $#F^d$ like the eigenspace of #B,
+  It is possible to find such a #vv with very high probability simply by choosing any #vv randomly out of sol(#C).
+  If sol(#C) was contained to any subspace of $#F^d$ like the eigenspace of #B,
   then $H$ is definitively not independently random.
 
   #remark[
     This can be made precise by switching to the canonical algebraic representation,
     where the input and the answer vectors are all orthogonal.
-    Then #sol[#C] is a graph on top of $X := #ker[#I]^tack.t$.
+    Then sol(#C) is a graph on top of $X := #ker[#I]^tack.t$.
     Because $H$ is a random oracle, any point above $X$ is equally likely,
     so the probability that the graph lies in a subspace is negligible.
   ]
 
-  By the #ref(<lemma-sol-commutes>) we have $#vv in #sol[#C ] = #sol[#C  #B] <=> #B#vv in #sol[#C ]$.
+  By the #ref(<lemma-sol-commutes>) we have $#vv in sol(#C ) = sol(#C  #B) <=> #B#vv in sol(#C )$.
   Finally, as we have assumed that $#O#B = #O$ we get that:
   $
     #O#B#vv = (#O#B) #vv = #O#vv
@@ -201,16 +201,16 @@ then there is a collision resistance attack on #P.
 
   == Case (c), the collapse of queries
   Assume that $#P' = (#I'#T, #O#T, #C#T)$ is a pseudo algebraic representation for which (a) or (b) hold.
-  Now by the attack proofs for case (a) and case (b) we get a $#vv != #vv'$ in #sol[#C#T]
+  Now by the attack proofs for case (a) and case (b) we get a $#vv != #vv'$ in sol(#C#T)
   such that $(#O#T)#vv = (#O#T)#vv'$.
-  We have $#I'#T#vv != #I'#T#vv'$ by the bijection between #sol[#C#T] and $#I'#T$ because $#P'$ is a pseudo algebraic representation.
+  We have $#I'#T#vv != #I'#T#vv'$ by the bijection between sol(#C#T) and $#I'#T$ because $#P'$ is a pseudo algebraic representation.
 
   Now we can apply #ref(<lemma-sol-commutes>) which gives us in this context the following equivalence:
   $
-    #vv in #sol[#C #T] <==> #T #vv in #sol(C)
+    #vv in sol(#C #T) <==> #T #vv in sol(C)
   $
 
-  Putting it all together we have $#T#vv != #T #vv'$, which are both in $#sol(C)$ and fulfill the equation $#O (#T#vv) = #O (#T#vv')$.
+  Putting it all together we have $#T#vv != #T #vv'$, which are both in $sol(C)$ and fulfill the equation $#O (#T#vv) = #O (#T#vv')$.
   So #I#T#vv and $#I#T#vv'$ are collisions for #P.
 
   #remark("Unsolvable constraints")[
@@ -305,7 +305,7 @@ Therefore case (c) of #ref(<conjecture-no-nonces-v2>) is fulfilled.
 
 Here I write out exactly what happens in the proof for this concrete example.
 By solving #Ccs#T (i.e. running the attacking Linicrypt program) in two different ways by fixing a different value for $mat(1,0,0)#vv$,
-we get two distinct #vv and $#vv'$ in $#sol[#C#T]$.
+we get two distinct #vv and $#vv'$ in $sol(#C#T)$.
 They have the form:
 $
   #vv = mat(x;H(x);H(H(x))) != mat(x';H(x');H(H(x'))) = #vv'
@@ -437,8 +437,8 @@ The collapsed program is then
 
 This is the same case as the previous example,
 the $#C#T$ is solvable fixing the output and fixing $mat(1,0)$.
-Because this program has a collision structure (specifically it is degenerate) we get solutions in $#sol[#C#T]$,
-i.e. any $#vv = (x,E(x,x))$ for $x$ in #F is in $#sol[#C#T]$.
+Because this program has a collision structure (specifically it is degenerate) we get solutions in $sol(#C#T)$,
+i.e. any $#vv = (x,E(x,x))$ for $x$ in #F is in $sol(#C#T)$.
 We map it to collisions of #P via #I#T, so every
 $#I#T #vv = (x, -E(x,x))$ for $x$ in #F
 collides with each other.
@@ -517,10 +517,10 @@ $
 $
 
 We have $#C#B = #C$ as required in #ref(<conjecture-no-nonces>) with $#O#B = #O$.
-So, if we take any $#vv$ in $#sol[#C]$, the chances are very high that it does not lie
+So, if we take any $#vv$ in $sol(#C)$, the chances are very high that it does not lie
 in the eigenspace for 1 of $#B$ so that $#B#vv != #vv$.
 Specifically, we can take any input $(x, y)$ to #P for $x != y$
-and use #P to compute the corresponding #vv in $#sol[#C]$ by setting $#vv = mat(x,y,H(x),H(y))^(tack.b)$.
+and use #P to compute the corresponding #vv in $sol(#C)$ by setting $#vv = mat(x,y,H(x),H(y))^(tack.b)$.
 
 Then by #ref(<conjecture-no-nonces-v2>), we get the second preimage $#I#B#vv = (y,x)$.
 
@@ -546,7 +546,7 @@ $ #B = mat(0, 1, 1, 0;1, 0, 0, -1;0, 0, 0, 1;0, 0, 1, 0) $
 This #B leaves both #C and #O unchanged
 (i.e. $#C#B = #C$ and $#O#B = #O$) so the conditions of the permutation attack are fulfilled.
 
-An arbitrary vector from #sol[#C] is for example
+An arbitrary vector from sol(#C) is for example
 $#vv = mat(x,y,H(x),H(y+H(x)))^tack.b$ for some $x != y$ in #F.
 It is the execution vector for the input $(x,y)$ to #P.
 
@@ -877,7 +877,7 @@ Just some random notes.
 
 General proof idea of #ref(<conjecture-no-nonces-v2>):
 - (a), (b) or (c) $=>$ attack is done
-- Reverse: Assume adversary finds collisions $#vv != #vv'$ in #sol[#C] under $#O$ ($#O#vv = #O#vv'$),
+- Reverse: Assume adversary finds collisions $#vv != #vv'$ in sol(#C) under $#O$ ($#O#vv = #O#vv'$),
   then (a), (b) or (c)
 
 We have:
@@ -925,9 +925,9 @@ Also, #vv and $#vv'$ are in the image of #T, because its columns form a basis of
 
 So there are preimages $ww$ and $ww'$ to $vv$ and $vv'$ means by #ref(<lemma-sol-commutes>)
 $
-  ww in #sol[#C#T] <==> #T ww in #sol[#C],
+  ww in sol(#C#T) <==> #T ww in sol(#C),
 $
-that $#ww$ and $#ww'$ are in $#sol[#C#T]$.
+that $#ww$ and $#ww'$ are in $sol(#C#T)$.
 The reason for finding these
 
 Now we have reduced the attack $#Att$ to an attack on $#P#T$:
@@ -954,7 +954,7 @@ Ideas:
 Lets assume $#C#T$ is not solvable.
 
 *New idea*:
-But the attacker has already computed the states $#ww$ and $#ww'$ in $#sol[#C#T]$.
+But the attacker has already computed the states $#ww$ and $#ww'$ in $sol(#C#T)$.
 If we can prove that it is hard to find solutions to unsolvable constraints,
 then we can use that to complete this step of the proof.
 
@@ -1342,7 +1342,7 @@ These attack types overlap mostly with previous categorizations, and for the dif
 TODO flesh out these ideas:
 - All CR attacks on a Linicrypt program are given by considering the subspaces of $ker(OO_1 - OO_2)$
   in which the constraints of $f^*(Cjoin)$ collapse.
-  For each subspace, if the 
+  For each subspace, if the
 
 == Notes and ideas, in random order
 - Second preimage resistance and collision resistance loose their relationsship for unsolvable constraints.
@@ -1393,6 +1393,10 @@ TODO flesh out these ideas:
     it would be ok to start computing constraints without knowing all the input.
     This is the case for merkle damgard for example.
 
+- Maybe we can simplify the solvable security game.
+  Remove fixing and outside parts.
+  Then maybe we can define that terminology
+
 = Meeting Notes
 
 == Meeting 28.08.2024
@@ -1423,7 +1427,7 @@ TODO flesh out these ideas:
 == Attack side
 === Short term
 - Try to model fixed point attacks like this.
-  Additionally to the solvability rules we add: $mat(xx) -> mat(xx)$ is solvable fixing $Fixing$ if $xx$ is not in $Fixing$ 
+  Additionally to the solvability rules we add: $mat(xx) -> mat(xx)$ is solvable fixing $Fixing$ if $xx$ is not in $Fixing$
 - Apply this to the PGV compression functions and see which are insecure
 
 == Longer term
@@ -1433,3 +1437,387 @@ TODO flesh out these ideas:
 
 == Security side
 - Formalize proofs of unsolvability and the corollary
+
+= Clean Start
+
+#remark[
+  Here I want to do a clean start in the order of how a paper could be structured.
+]
+
+== Abstract
+
+== New constructs for Linincrypt
+
+The general direction we take is to generalize the Linicrypt structure and see where that leads to.
+Instead of defining what a Linicrypt program is, and then construct its algebraic representation,
+we directly start with the algebraic structure.
+Later we can map the structures back to Linicrypt programs.
+This approach allows us to formally work with invalid Linicrypt programs,
+e.g. programs that define the same variable twice forcing the value of different computations to be equal.
+It turns out that cryptographic properties of a program #P can be formulated in terms of such invalid Linicrypt programs.
+
+First we start with basic definitions and notation.
+We will start with a $d$-dimensional vector space over a finite field #F which we write $Vp$.
+This represents the states that a linicrypt program #P with $d$ base variables can be in.
+It's dual space #Vd will play an important role by representing the variables of a program.
+
+Now we define the concept of an oracle constraint.
+This defintion can then be satisfied by different types of constraints like a random oracle constraint or an ideal cipher constraint.
+
+#definition("Random oracle constraint")[
+  Let $H$ be an instance of a random oracle.
+  A random oracle constraint $c$ in $Vp$ for $H$ is a tuple $(qq_1, ..., qq_k, aa)$ where $qq_1, ..., qq_k$ and $aa$ are dual vectors in $Vd$.
+  We also write $qq_1, ..., qq_k |-> aa$ for it.
+
+  A vector $v$ from $Vp$ is called a solution to $c$ if $H(qq_1 vv, ..., qq_k vv) = aa vv$.
+  In this case we also say $v$ solves $c$.
+  The set of such vectors is denoted by $solH(c)$.
+  This defines the solution function for random oracle constraints $solH$ mapping constraints to subsets of $Vp$.
+]
+
+If it is clear from context about what oracle and what state space we are talking about we will drop these terms from the notation.
+
+#definition("Ideal cipher constraint")[
+  Let $IC$ be an instance of an ideal cipher.
+  An ideal cipher constraint $c$ in $Vp$ for $H$ is a tuple $(xx, kk, yy)$ where $xx, kk$ and $yy$ are dual vectors in $Vd$.
+  We also write $xx <-->^(#move(dy: 1.7pt, kk)) yy$ for it.
+
+  A vector $v$ from $Vp$ is called a solution to $c$ if $E(kk vv, xx vv) = yy vv$,
+  or equivalently $E^(-1)(kk vv, yy vv) = xx vv$.
+  In this case we also say $v$ solves $c$.
+  The set of such vectors is denoted by $solE(c)$.
+  This defines the solution function for random oracle constraints $solE$ mapping constraints to subsets of $Vp$.
+]
+
+Assume we have a set of constraints $CC = {c_1, ..., c_n}$ where $c_i$ is a constraint for the oracle $Ora_i$.
+Then we define $sol(CC)$ to be the vectors $v$ in $Vp$ which solve all constraints in $CC$, i.e.:
+$
+  sol(CC) = sol_(Ora_1)(c_1) sect ... sect sol_(Ora_n)(c_n)
+$
+
+We define a new security game that works for any oracle model.
+
+#definition("Solvability game")[
+  Let #CC be a set of constraints with solution function $sol$ over a family of fields $FF_lambda$.
+  Let $Fixing$ be a subset of $Vd$ and $W$ be a subset of $Vp$.
+  #CC is $(q, epsilon)$-unsolvable fixing #Fixing outside of $W$ if for all q-query adversaries $Att$,
+  $Pr[sans("SolGame")(CC, Fixing, W, Att, lambda)] <= epsilon$.
+
+  #algo(
+    // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
+    header: $underline(sans("SolGame")(CC, Fixing, W, Att, lambda))$,
+    line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+  )[
+    instantiate an oracle #Ora \
+    $xx <- Vp$ \
+    $vv <- Att^Ora (lambda; xx)$ \
+    return $vv in sol(CC) and vv - xx in ker(Fixing) and vv in.not W$
+  ]
+]
+
+In order to win $sans("SolGame")$ the adversary has to find a state vector $vv$ in $Vp$ that satisfies 3 conditions:
+1. It is a solution to the constraints $CC$ given an instance of the ordacle
+2. It has found this solution while keeping the values of the variables in $Fixing$ fixed
+3. The solution lies outside of the subspace $W$
+
+Condition 2. models the ability to specify the input of a Linicrypt program.
+Condition 3. is useful when we look for specific solutions satisfying a linear inequality.
+When we charaterize collision resistance, we will write $vv != vv'$ in terms of a subspace.
+
+#lemma("solvability of random oracle constraint")[
+  Let $c = (qq_1, ..., qq_k, aa)$ be a random oracle constraint and $Fixing$ a subspace of $Vd$.
+  We say $c$ is solvable fixing $Fixing$ if $aa$ is not in $Fixing + span(qq_1\, ...\, qq_k)$.
+
+  If $c$ is solvable fixing $Fixing$ then there is a 1-query adversary $Att$ whith
+  $
+    Pr[sans("SolGame")({c}, Fixing, 0, Att, lambda)] >= 1 - 1 / (|FF|)
+  $.
+]
+
+#proof[
+  We describe the program $Att$ and prove that it wins $SolGame$.
+  Define $Fixing'$ to be a $n-1$ dimensional subspace containing $Fixing + span(qq_1\, ...\, qq_k)$ but not $aa$.
+  This is possible because $aa$ is not in $Fixing + span(qq_1\, ...\, qq_k)$.
+  We choose a basis of $Fixing'$ and we call it
+  $vv_1, ..., vv_(n-1)$.
+  Then we define the matrix #BB via the equation
+  $
+    BB^(-1) = mat(vv_1; ...; vv_(n-1); aa).
+  $
+  The matrix on the right is invertible, therefore $BB$ is well defined this way.
+  The following Linicript program is the adversary
+  #algo(
+    // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
+    header: $underline(Att^H (lambda; xx))$,
+    line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+  )[
+    $v_i := vv_i xx$ where $i=1,...,n-1$ \
+    $q_1 := qq_1 xx$ where $i=1,...,k$ \
+    $a := H(q_1, ..., q_k)$ \
+    return $BB mat(v_1; ...; v_(n-1); a)$
+  ]
+
+  We will show that this $vv = BB mat(v_1; ...; v_(n-1); a)$ fulfills the conditions in #SolGame.
+  First we prove an auxiliary statement.
+  Let $bold(alpha) in Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary.
+  Then we have:
+  $
+    bold(alpha) vv = sum_(i=1)^(n-1) lambda^i vv_i vv
+    = sum_(i=1)^(n-1) lambda^i vv_i BB mat(v_1; ...; v_(n-1); a)
+    = sum_(i=1)^(n-1) lambda^i v_i
+    = sum_(i=1)^(n-1) lambda^i vv_i xx
+    = bold(alpha) xx
+  $
+  This only works because of the structure of the basis that we have chosen.
+  In words, this just means that for variables in $Fixing + span(qq_1\, ... \, qq_k)$ the state vectors $vv$ and $xx$ take the same values.
+
+  Now we check if the conditions from the game are fulfilled. Starting with condition 1.:
+  $
+    aa vv = aa BB mat(v_1; ...; v_(n-1); a) = a = H(q_1, ..., q_k) = H(
+      qq_1 xx, ..., qq_k xx
+    ) = H(qq_1 vv, ..., qq_k vv)
+  $
+  Condition 2. is also fulfilled. Let $bold(alpha)$ be any dual vector in $Fixing$, then $bold(alpha) (vv - xx) = 0$.
+  Therefore $vv - xx$ is in $ker(Fixing)$.
+  Condition 3., in this case $vv != 0$,
+  is almost always fulfilled except if the adversary is extremely unlucky.
+  For that to happen, at the very least $a$ needs to be zero, which happens with probability $1/(|FF|)$.
+]
+
+TODO include $span(c_i)$ in the definition of the oracle constraint.
+It could that solving a constraint means fixing some other arbitrary variable,
+but usually it is just the span of all the dual vectors in the constraint.
+
+#corollary[
+  Let $#CC = {c_1, ..., c_n}$ be a set of constraints, ordered by their index.
+  Let $Fixing_0$ be a subspace of $Vd$,
+  and define $Fixing_i = Fixing_(i-1) + span(c_i)$.
+  We say $CC$ is solvable fixing $Fixing_0$ if $c_i$ is solvable fixing $Fixing_(i-1)$ for every $i=1,...,n$.
+
+  Then there exists a n-query adversary $Att$ with
+  $Pr[sans("SolGame")(CC, Fixing_0, 0, Att, lambda)] >= 1/ (|FF|)$.
+]
+
+#proof[
+  Because $c_i$ is solvable fixing $Fixing_(i-1)$, we get an adversary $Att_i$ for $i=1,...,n$ with $SolAdv[Att_i, {c_i}, Fixing_(i-1), 0] >= 1/(|FF|)$.
+  We construct the adversary
+  $Att = Att_n compose ... compose Att_1$.
+  Let $vv = Att(xx)$ and $vv_i = Att_i compose ... compose Att_1$ with $vv_0 = xx$.
+
+  Note that $vv_i$ is contained in $sol(c_i)$.
+  Also, $vv_i - vv_(i-1) in ker(Fixing_(i-1)) supset.eq span(c_(i-1)) + ... + span(c_1)$.
+  By induction we have $vv_i in sol(c_i) sect sol(c_(i-1)) sect ... sect sol(c_1) = sol({c_i, ..., c_1})$.
+
+  Because $Fixing_0 subset.eq Fixing_(i-1)$ we know that $vv_i - vv_(i-1) in ker(Fixing_0)$ for all $i=1,...,n$.
+  Therefore their sum is also contained in the subspace, so $vv_i - xx in ker(Fixing_0)$.
+  This means condition 2 is fulfilled.
+
+  Condition 3. is almost always fulfilled exept if all the calls to the oracle return 0 by chance.
+]
+
+#remark[
+  - This proof works for sets of constraints which are mixed from different oracle models.
+  - The program $Att$ can be expressed as a Linicrypt program.
+  - What we will later prove is that the reverse of the corollary is also true.
+  This means that any adversary for the $SolGame$ is actually nothing else than a Linirypt program.
+]
+
+Remark for Zahra and Bruce: I find all of this until here quite complicated for what it is supposed to say.
+I am trying to formalize the idea that if $CC$ is solvable,
+then we can find solutions via a step by step solving of the constraints.
+And this step by step solving is basically a Linicrypt program.
+Well... maybe further iteration makes it simpler.
+
+== Mapping constraints between spaces
+The previous constructs allow us to (more or less) naturally talk about multiple oracle models simulaneously.
+Another benefit is that mappings between constraints are possible and offer further proof methods.
+This means that we can relate the executions of different Linicrypt programs,
+if one can establish a linear map between their algebraic representations.
+
+We will use the dual map of a linear map a lot.
+Assume we have a linear map $f: W -> Vp$.
+This induces a natural map on the dual spaces going in the other direction
+called $f^*: Vd -> W^*$.
+It is defined by $
+f^*(bold(alpha))(ww) = bold(alpha)f(ww)
+$ for $bold(alpha)$ a dual vector in $Vd$ and $vv$ a vector in $W$.
+These two maps have a natural interpretation in the context of Linicrypt programs.
+Assume $Vp$ is the state space of a program.
+The algebraic representation is a structure living in the dual space of $Vp$,
+i.e. it is a structure composed of the row vectors which represent variables.
+We can use $f^*$ to map the linicyrpt program to a program with state space $W$.
+When we don't constrain the map $f$ at all,
+this idea becomes very useful because it models the collapse of distinct calls to the oracle.
+
+By abusing the notation a bit we will write $f^*(CC)$ to mean the set of constraints when we apply $f^*$ to all the components of each constraint.
+Note, that this set can be smaller than the original set.
+Sometimes we will also just write $fs CC$.
+
+#lemma("Linear maps of constraints")[
+  Let #C be a set of constraints of dimension $d$ and
+  let $f: W -> Vp$ be a linear map.
+  Then we have
+  $
+    #ww in sol(f^*CC) <==> f (ww) in sol(CC)
+  $
+]<mapping-constraints>
+#proof[
+  We first need to prove the case of a single constraints for any oracle model.
+  Let $c = qq_1, ..., qq_k |-> aa$ be a random oracle constraint.
+  $
+    vv in sol(fs c)
+    &<==> (fs aa) vv = H((fs qq_1) vv, ..., (fs qq_k) vv) \
+    &<==> aa ff vv = H(qq_1 ff vv, ..., qq_k ff vv) \
+    &<==> ff vv in sol(c)
+  $
+  An similar argument can be made for ideal cipher constraints.
+
+  The following equivalences prove the lemma:
+  $
+    vv in sol(fs CC)
+    &<==> vv in sol(c') text(" for all ") c' in fs CC \
+    &<==> vv in sol(fs c) text(" for all ") c in CC \
+    &<==> ff vv in sol(c) text(" for all ") c in CC \
+    &<==> ff vv in sol(CC)
+  $
+]
+
+This Lemma is more consequential than it looks.
+It gives the key to understanding the structure of a set of constraints by analyzing the structure of a mapped version of the constraints.
+By choosing the right maps, we can simplify the constraints.
+This happens when we map a set of constraints that are not solvable to a solvable set.
+A simple example is $CC = {mat(1, 0, 0) |-> mat(0,0,1), mat(0, 1, 0) |-> mat(0,0,1)}$
+This is not solvable.
+But applying the linear map with the matrix
+$
+M_f = mat(1,0; 1,0; 0,1)
+$ it becomes solvable.
+Solutions to $CC M_f$ map back to solutions of $CC$ under $f$.
+Note that $sol(CC)$ also contains other solutions, i.e. corresponding to cases when $H(x) = H(y)$ for some $x != y$.
+
+I will use the notation $iota_W$ for the linear map of from a subspace $W$ to its containing space.
+
+#corollary[
+  Let $#CC = {c_1, ..., c_n}$ be a set of constraints, ordered by their index.
+  Let $U$ be a subspace of $Vp$.
+  We say $CC$ is solvable outside of $U$ if
+  there exists a subspace $W$ of $Vp$ with $W subset.eq.not U$ and
+  $incWs(CC)$ is solvable (fixing 0).
+
+  If #CC is solvable outside of $W$ then there is an adversary #Att with 
+  $
+  SolAdv[CC, 0, W, Att] >= 1 - 1/(|FF|).
+  $
+]
+
+#proof[
+  We describe the adversary $Att$ in terms of the adversary $Att_W$ that we get from
+  the statement of the corollary.
+  We are given by the game the value $xx in Vp$,
+  which doesn't really matter because we are considering the case $Fixing = 0$.
+  Choose a random $xx' in W$.
+  Assume $Att_W (xx')$ wins $SolGame[incWs CC, 0, 0]$ by outputting $ww in sol(incWs CC) subset.eq W$.
+  Because $incWs CC$ is proper,
+  the probability that $ww$ is in $U$ is $<= 1 / (|FF|)$.
+  TODO formalize the last sentence.
+  Our adversary $Att$ just outputs $incW (ww) = ww$.
+  By #ref(<mapping-constraints>) we have $ww = incW ww in sol(CC)$.
+  The second condition is void anyways $ww - xx in ker(0) = Vp$.
+  The third condition $ww in.not U$ is almost always fulfilled.
+]
+
+Remark Zahra and Bruce: I need to figure out how to make this work while fixing $Fixing$.
+Not neccessary for the CR characterization, but for 2PR it is.
+
+#theorem("Unsolvability")[
+  Let #CC be a set of constraints and $W$ a subspace of $Vp$.
+  Assume that there is an adversary $Att$ with
+  $
+    SolAdv[CC, 0, W] > N^n / (|FF|).
+  $
+  Then $CC$ is solvable outside of $W$.
+]
+
+#proof[
+  The strategy is to consider the event that #Att wins the game and
+  bound this probability from above assuming $CC$ is not solvable outside of $W$.
+
+  So we assume $Att(xx) = vv$ is a winning solution to $SolGame[CC, 0, W]$ and $Att$ made $N$ queries to an oracle.
+  Since we can observe the interaction of #Att with the oracles we can
+  observe its protocol $Q: {1, ..., N} -> union.big_(Ora) sans("Query")_Ora$.
+  Here $sans("Query")_Ora$ is the space of queries that can be made to the oracle $Ora$.
+  It consists of the values $c vv$ for all valid combinations of $Ora$-constraints $c$ and state vectors $vv$.
+  We can make some assumptions on $Q$ by modifying $Att$ slightly:
+  1. $Q$ is injective. This is achieved my adding memoization of the queries to $Att$.
+  2. All the queries $c vv$ are actually in $im(Q)$ for all $c in CC$.
+    We simply force $Att$ to actually make the queries $c vv$ before it outputs $vv$.
+
+  This means we can define the function 
+  $T: CC -> {1, ..., N}$ by $T(c) = Q^(-1)(c vv)$.
+  It represents the query time at which the values for the constraint $c$ are determined.
+
+  In order to proceed with the proof,
+  we consider the event that the adversary wins and has chosen a particular timing function $T$.
+  We have
+  $
+    Pr[SolGame(CC, 0, W, Att)] 
+    &= sum_T Pr[SolGame(CC, 0, W, Att) "and" T "is used"] \
+    &> N^n / (|FF|)
+  $
+  There are $N^n$ possible mappings $CC -> {1, ..., N}$.
+  By the pidgeonhole principle for a specific $T: CC -> {1, ..., N}$
+  we must have $Pr[SolGame(CC, 0, W, Att) "and" T "is used"] > 1/ (|FF|)$.
+  Let us fix this $T$ for the following.
+
+  This function $T$ might not be injetive, i.e. $Att$ could determine multiple constraints with a single query.
+
+  We therefore map the constraints to a set of constraints for which this doesn't happen.
+  Let
+  $
+    K := sect.big_(c,c' in C \ c vv = c' vv) ker(c - c')
+  $.
+  This is a bit of abuse in notation which we clarify now.
+  If $c$ and $c'$ are constraints of different oracle type we set $ker(c-c') = Vp$.
+  Otherwise $ker(c - c') = {vv in Vp | c vv = c' vv}$.
+  TODO add what $c vv = c' vv$ means to the definition of $c$ (its just componentwise equaltiy).
+
+  Consider the embedding map $f: K -> Vp$. We first assert three statements:
+  1. $vv$ is in $K$
+  2. If $c vv = c' vv$ then $fs c = fs c'$ 
+  3. $K$ is not a subspace of $W$
+
+  Proof of 1.: This is true by definition.
+
+  Proof of 2.:
+  Let $ww in K$ arbitrary then $(fs c) ww = c ff ww = c' ff ww = (fs c) ww$.
+
+  Proof of 3.:
+  Because $Att$ has won $SolGame[CC, 0, W]$ we know that $vv in.not W$.
+  Together with $vv in K$ we have $K subset.eq.not W$.
+  
+  We now define the map $T': fs CC -> {1, ..., N}$ by $T'(fs c) = Q^(-1)(fs c vv)$.
+  This is well defined because $vv$ is in $K$.
+  We can prove that it is injective.
+  $
+  T'(fs c) = T'(fs c')
+  &=> Q^(-1)(fs c vv) = Q^(-1)(fs c' vv) \
+  &=> fs c vv = fs c' vv quad text("because") Q text("is injective")\
+  &=> c vv = c' vv\
+  &=> fs c = fs c'
+  $
+
+  Because $T'$ is injective this defines an ordering on $fs CC = {c'_1, ..., c'_(n')}$.
+  We have assumed that $CC$ is not solvable outside of $W$.
+  That definition includes the map $f$ so there must be a constraint $c'_i$ which is
+  not solvable fixing $Fixing_(i-1) = span(c'_1\, ...\, c'_(i-1))$.
+
+  TODO how to generalize smoothly to ICM. We need another building block I think.
+
+  Assume $c' = qq_1, ..., qq_k |-> aa$.
+  At the time $T'(c')$ the adversary first determines the value of $qq_i vv = q_i$,
+  and then gets back the result from this fresh query to the oracle.
+  But we have $aa in Fixing_(i-1) + span(qq_0\, ...\, qq_k)$,
+  so $aa vv$ has already been determined.
+  Therefore the probability that $H(q_1, ..., q_k) = aa vv$ is equal to $1 / (|FF|)$.
+  This is the contradiction we needed to prove that $CC$ is indeed solvable outside of $W$.
+]

@@ -4,8 +4,9 @@
 
 // operations
 #let exec(x) = $sans("exec")(#x)$
-#let sol(x) = $sans("sol")(#x)$
-#let solH(x) = $sans("sol")_H (#x)$
+#let sol = $sans("sol")$
+#let solH = $sans("sol")_H$
+#let solE = $sans("sol")_E$
 #let ker(x) = $sans("ker")(#x)$
 #let im(x) = $sans("im")(#x)$
 #let rows(x) = $sans("rows")(#x)$
@@ -29,9 +30,13 @@
 // crypto
 #let Att = $cal("A")$
 #let Adv = $sans("adv")$
-#let SolAdv = $serif("SOL")sans("adv")$
+#let SolAdv = $sans("SolAdv")$
 #let Ti = $T$
 #let fin = $sans("finish")$
+#let Ora = $cal("O")$
+#let RO = $H$
+#let IC = $E$
+#let SolGame = $sans("SolGame")$
 
 // matrix stuff
 #let vv = $bold(v)$
@@ -62,6 +67,14 @@
 #let Proj = $bold(P)$
 #let MM = $bold(M)$
 
+// maps
+#let ff = $f$
+#let fs = $f^*$
+#let incU = $iota_U$
+#let incUs = $iota_U^*$
+#let incW = $iota_W$
+#let incWs = $iota_W^*$
+
 // constraints shortcuts
 #let cs = $italic("cs")$
 #let fix = $italic("fix")$
@@ -86,7 +99,7 @@
   - The function going from the inputs of a deterministic #P to the values of the base variables (the state space) is called $b_(#P) : #F^k arrow #F^d$
   - Instead of $#vv _(sans("base"))$ I will just write $#vv$
   - The set of base variables one can get by executing a Linicrypt program #P on all of its inputs is called $#exec[#P]$
-  - The set of solutions to a set of constraints #C is called $#sol[#P]$
+  - The set of solutions to a set of constraints #C is called $sol(PP)$
   - The input matrix to #P is called #I and the output matrix is called #O so I will write #PIOC for a Linicrypt program and its algebraic representation
   - The function that a determinsitic #P computes is called $f_(#P) = bold(O) circle.tiny b_(#P)$
 ]
