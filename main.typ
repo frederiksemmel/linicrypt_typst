@@ -1486,7 +1486,7 @@ If it is clear from context about what oracle and what state space we are talkin
   or equivalently $E^(-1)(kk vv, yy vv) = xx vv$.
   In this case we also say $v$ solves $c$.
   The set of such vectors is denoted by $solE(c)$.
-  This defines the solution function for random oracle constraints $solE$ mapping constraints to subsets of $Vp$.
+  This defines the solution function for ideal cipher constraints $solE$ mapping constraints to subsets of $Vp$.
 ]
 
 Assume we have a set of constraints $CC = {c_1, ..., c_n}$ where $c_i$ is a constraint for the oracle $Ora_i$.
@@ -1515,6 +1515,8 @@ We define a new security game that works for any oracle model.
   ]
 ]
 
+
+
 In order to win $sans("SolGame")$ the adversary has to find a state vector $vv$ in $Vp$ that satisfies 3 conditions:
 1. It is a solution to the constraints $CC$ given an instance of the oracle
 2. It has found this solution while keeping the values of the variables in $Fixing$ fixed
@@ -1524,9 +1526,21 @@ Condition 2. models the ability to specify the input of a Linicrypt program.
 Condition 3. is useful when we look for specific solutions satisfying a linear inequality.
 When we characterize collision resistance, we will write $vv != vv'$ in terms of a subspace.
 
+
+TODO example from a Linicryp program -> explain why we use #Fixing for input
+
+Example of inverse to Linicryp program.
+
+TODO Connect $vv in sol(CC)$ to base vectors and Linicyrp program executions.
+
+Maybe no example for $W != 0$ becuase this is collision resistance.
+
+
+Notion: Sum of subspaces.
+
 #lemma("solvability of random oracle constraint")[
   Let $c = (qq_1, ..., qq_k, aa)$ be a random oracle constraint and $Fixing$ a subspace of $Vd$.
-  We say $c$ is solvable fixing $Fixing$ if $aa$ is not in $Fixing + span(qq_1\, ...\, qq_k)$.
+  We say $c$ is called solvable fixing $Fixing$ if $aa$ is not in $Fixing + span(qq_1\, ...\, qq_k)$.
 
   If $c$ is solvable fixing $Fixing$ then there is a 1-query adversary $Att$ with
   $
@@ -1536,13 +1550,13 @@ When we characterize collision resistance, we will write $vv != vv'$ in terms of
 
 #proof[
   We describe the program $Att$ and prove that it wins $SolGame$.
-  Define $Fixing'$ to be a $n-1$ dimensional subspace containing $Fixing + span(qq_1\, ...\, qq_k)$ but not $aa$.
+  Define $Fixing'$ to be a $d-1$ dimensional subspace containing $Fixing + span(qq_1\, ...\, qq_k)$ but not $aa$.
   This is possible because $aa$ is not in $Fixing + span(qq_1\, ...\, qq_k)$.
   We choose a basis of $Fixing'$ and we call it
-  $vv_1, ..., vv_(n-1)$.
+  $vv_1, ..., vv_(d-1)$.
   Then we define the matrix #BB via the equation
   $
-    BB^(-1) = mat(vv_1; ...; vv_(n-1); aa).
+    BB^(-1) = mat(vv_1; ...; vv_(d-1); aa).
   $
   The matrix on the right is invertible, therefore $BB$ is well defined this way.
   The following Linicrypt program is the adversary
@@ -1551,21 +1565,21 @@ When we characterize collision resistance, we will write $vv != vv'$ in terms of
     header: $underline(Att^H (lambda; xx))$,
     line-numbers: false, inset: 0.7em, fill: none, block-align: left,
   )[
-    $v_i := vv_i xx$ where $i=1,...,n-1$ \
+    $v_i := vv_i xx$ where $i=1,...,d-1$ \
     $q_1 := qq_1 xx$ where $i=1,...,k$ \
     $a := H(q_1, ..., q_k)$ \
-    return $BB mat(v_1; ...; v_(n-1); a)$
+    return $BB mat(v_1; ...; v_(d-1); a)$
   ]
 
-  We will show that this $vv = BB mat(v_1; ...; v_(n-1); a)$ fulfills the conditions in #SolGame.
+  We will show that this $vv = BB mat(v_1; ...; v_(d-1); a)$ fulfills the conditions in #SolGame.
   First we prove an auxiliary statement.
   Let $bold(alpha) in Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary.
   Then we have:
   $
-    bold(alpha) vv = sum_(i=1)^(n-1) lambda^i vv_i vv
-    = sum_(i=1)^(n-1) lambda^i vv_i BB mat(v_1; ...; v_(n-1); a)
-    = sum_(i=1)^(n-1) lambda^i v_i
-    = sum_(i=1)^(n-1) lambda^i vv_i xx
+    bold(alpha) vv = sum_(i=1)^(d-1) lambda^i vv_i vv
+    = sum_(i=1)^(d-1) lambda^i vv_i BB mat(v_1; ...; v_(d-1); a)
+    = sum_(i=1)^(d-1) lambda^i v_i
+    = sum_(i=1)^(d-1) lambda^i vv_i xx
     = bold(alpha) xx
   $
   This only works because of the structure of the basis that we have chosen.
@@ -1595,8 +1609,11 @@ but usually it is just the span of all the dual vectors in the constraint.
   We say $CC$ is solvable fixing $Fixing_0$ if $c_i$ is solvable fixing $Fixing_(i-1)$ for every $i=1,...,n$.
 
   Then there exists a n-query adversary $Att$ with
-  $Pr[sans("SolGame")(CC, Fixing_0, 0, Att, lambda)] >= 1/ (|FF|)$.
+  $Pr[sans("SolGame")(CC, Fixing_0, 0, Att, lambda)] >= 1 - 1/ (|FF| ^ d)$.
 ]
+
+TODO analyze condition 3. more precisely to get $|FF| ^d$.
+
 
 #proof[
   Because $c_i$ is solvable fixing $Fixing_(i-1)$, we get an adversary $Att_i$ for $i=1,...,n$ with $SolAdv[Att_i, {c_i}, Fixing_(i-1), 0] >= 1/(|FF|)$.
@@ -1615,9 +1632,11 @@ but usually it is just the span of all the dual vectors in the constraint.
   Condition 3. is almost always fulfilled except if all the calls to the oracle return 0 by chance.
 ]
 
+TODO Connect this corollary to collision structure.
+
 #remark[
   - This proof works for sets of constraints which are mixed from different oracle models.
-  - The program $Att$ can be expressed as a Linicrypt program.
+  - The program $Att$ can be expressed as a Linicrypt program. TODO expand a bit
   - What we will later prove is that the reverse of the corollary is also true.
   This means that any adversary for the $SolGame$ is actually nothing else than a Linicrypt program.
 ]
@@ -1695,6 +1714,21 @@ $ it becomes solvable.
 Solutions to $CC M_f$ map back to solutions of $CC$ under $f$.
 Note that $sol(CC)$ also contains other solutions, i.e. corresponding to cases when $H(x) = H(y)$ for some $x != y$.
 
+We want to model the idea that a Linicrypt program, when given random inputs,
+the state vector of the program will be randomly distributed in the state space.
+
+#definition("Proper random oracle constraints")[
+  Let $c$ and $c'$ be two random oracle constraints with $c != c'$.
+  The pair ${c, c'}$ is called proper if the query parts are different.
+
+  A set of constraints $CC$ is called proper if each pair constructed from it is proper.
+]
+
+#proposition("Solutions of proper constraints")[
+  Assume $CC$ is a proper set of constraints in $Vp$ and $W subset Vp$ is a subspace.
+  Then the probability that $sol(CC)$ is contained in $W$ is smaller or equal to $1 / (|FF|)$.
+]
+
 I will use the notation $iota_W$ for the linear map of from a subspace $W$ to its containing space.
 
 #corollary[
@@ -1761,7 +1795,7 @@ Not necessary for the CR characterization, but for 2PR it is.
   We have
   $
     Pr[SolGame(CC, 0, W, Att)] 
-    &= sum_T Pr[SolGame(CC, 0, W, Att) "and" T "is used"] \
+    &= sum_T Pr[SolGame(CC, 0, W, Att) "and" T "is used"] 
     &> N^n / (|FF|)
   $
   There are $N^n$ possible mappings $CC -> {1, ..., N}$.
@@ -1774,8 +1808,8 @@ Not necessary for the CR characterization, but for 2PR it is.
   We therefore map the constraints to a set of constraints for which this doesn't happen.
   Let
   $
-    K := sect.big_(c,c' in C \ c vv = c' vv) ker(c - c')
-  $.
+    K := sect.big_(c,c' in C \ c vv = c' vv) ker(c - c').
+  $
   This is a bit of abuse in notation which we clarify now.
   If $c$ and $c'$ are constraints of different oracle type we set $ker(c-c') = Vp$.
   Otherwise $ker(c - c') = {vv in Vp | c vv = c' vv}$.
