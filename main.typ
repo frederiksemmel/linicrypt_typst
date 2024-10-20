@@ -1475,6 +1475,8 @@ This definition can then be satisfied by different types of constraints like a r
   This defines the solution function for random oracle constraints $solH$ mapping constraints to subsets of $Vp$.
 ]
 
+TODO maybe think about adding visualizations.
+
 If it is clear from context about what oracle and what state space we are talking about we will drop these terms from the notation.
 
 #definition("Ideal cipher constraint")[
@@ -1527,6 +1529,43 @@ Condition 3. is useful when we look for specific solutions satisfying a linear i
 When we characterize collision resistance, we will write $vv != vv'$ in terms of a subspace.
 
 
+We will use an example to illustrate the meaning of conditions 1 and 2.
+Let $PP(x,y) = H(x) + H(y + H(x))$.
+Explicitly:
+#algo(
+  // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
+  header: $underline(PP(x, y))$,
+  line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+)[
+  $q_1 = x$ \
+  $a_1 = H(q_1)$ \
+  $q_2 = y + a_1$ \
+  $a_2 = H(q_2)$ \
+  return $(v_1, v_2, v_3, v_4)$
+]
+
+It has 4 base variables: $x, y, a_1, a_2$.
+If we construct the algebraic representation the variables correspond to the dual vectors:
+$
+  v_1 <-> vv_1 = mat(1,0,0,0) \
+  v_2 <-> vv_2 = mat(0,1,0,0) \
+  v_3 <-> vv_3 = mat(0,0,1,0) \
+  v_4 <-> vv_4 = mat(0,0,0,1) \
+$
+
+This program corresponds to a specific instantiation of the Solvability game,
+where we set $CC = {qq_1 |-> aa_1, qq_2 |-> aa_2}$, $Fixing = span(xx\, yy)$ and $W = 0$.
+
+$PP$ corresponds to a successful adversary to $SolGame$.
+The game chooses $xx$ at random.
+We input $(vv_1 xx, vv_2 xx)$ into $PP$ and get the base variables $vv = mat(v_1,v_2,v_3,v_4)^top$.
+This $vv$ is in $sol(CC)$, so condition 1. is fulfilled.
+
+TODO explicit in the conditions.
+
+Also, $vv - xx = (0,0,a_1, a_2)$, which is in $Fixing^0$
+
+
 TODO example from a Linicryp program -> explain why we use #Fixing for input
 
 Example of inverse to Linicryp program.
@@ -1551,6 +1590,8 @@ Notion: Sum of subspaces.
 #proof[
   We describe the program $Att$ and prove that it wins $SolGame$.
   Define $Fixing'$ to be a $d-1$ dimensional subspace containing $Fixing + span(qq_1\, ...\, qq_k)$ but not $aa$.
+  TODO consider using this
+  $Fixing' = Vd - aa$.
   This is possible because $aa$ is not in $Fixing + span(qq_1\, ...\, qq_k)$.
   We choose a basis of $Fixing'$ and we call it
   $vv_1, ..., vv_(d-1)$.
@@ -1558,7 +1599,7 @@ Notion: Sum of subspaces.
   $
     BB^(-1) = mat(vv_1; ...; vv_(d-1); aa).
   $
-  The matrix on the right is invertible, therefore $BB$ is well defined this way.
+  The matrix on the right is full rank and invertible, therefore $BB$ is well defined this way.
   The following Linicrypt program is the adversary
   #algo(
     // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
@@ -1566,7 +1607,7 @@ Notion: Sum of subspaces.
     line-numbers: false, inset: 0.7em, fill: none, block-align: left,
   )[
     $v_i := vv_i xx$ where $i=1,...,d-1$ \
-    $q_1 := qq_1 xx$ where $i=1,...,k$ \
+    $q_i := qq_i xx$ where $i=1,...,k$ \
     $a := H(q_1, ..., q_k)$ \
     return $BB mat(v_1; ...; v_(d-1); a)$
   ]
@@ -1574,6 +1615,11 @@ Notion: Sum of subspaces.
   We will show that this $vv = BB mat(v_1; ...; v_(d-1); a)$ fulfills the conditions in #SolGame.
   First we prove an auxiliary statement.
   Let $bold(alpha) in Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary.
+
+  TODO one more sentence on B and its property in third equation.
+
+  TODO think about separation Notation of variable from the value it takes in a particular execution.
+  
   Then we have:
   $
     bold(alpha) vv = sum_(i=1)^(d-1) lambda^i vv_i vv

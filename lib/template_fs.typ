@@ -48,11 +48,6 @@
     margin: {
       (top: 10em, left: 8em, right: 8em, bottom: 8em)
     },
-    // On the first page, the footer should contain the page number.
-    footer-descent: 12pt, footer: locate(loc => {
-      let i = counter(page).at(loc).first()
-      align(center, text(size: script-size, [#i]))
-    }),
   )
   set par(justify: true)
 
