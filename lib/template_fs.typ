@@ -1,4 +1,4 @@
-#import "@preview/ctheorems:1.1.0": *
+#import "@preview/ctheorems:1.1.3": *
 
 #let script-size = 8pt
 #let footnote-size = 8.5pt
@@ -39,6 +39,7 @@
   set document(title: title, author: names)
 
   // Set the body font. AMS uses the LaTeX font.
+  // set text(size: normal-size, font: "CMU Serif")
   set text(size: normal-size, font: "New Computer Modern")
 
   // Configure the page.
@@ -112,8 +113,7 @@
   // Configure lists and links.
   // set list(indent: 24pt, body-indent: 5pt)
   // set enum(indent: 24pt, body-indent: 5pt)
-  show link: set text(font: "New Computer Modern Mono")
-  // show link: set text(font: "New Computer Modern")
+  show link: set text(font: "CMU Typewriter Text Variable Width")
 
   // Configure equations.
   // show math.equation: set block(below: 8pt, above: 9pt)

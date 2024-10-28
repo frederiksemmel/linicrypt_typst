@@ -1,5 +1,7 @@
-#import "@preview/commute:0.2.0": node, arr, commutative-diagram
+// #import "@preview/commute:0.2.0": node, arr, commutative-diagram
+#import "@preview/fletcher:0.5.2" as fletcher: diagram, node, edge
 #import "@preview/algo:0.3.3": algo, i, d, comment, code
+#import "@preview/lovelace:0.3.0": *
 
 #import "lib/template_fs.typ": *
 #import "lib/linicrypt.typ": *
@@ -336,8 +338,6 @@ $
 The Merkle-Damgard like construction that I will use starts with the IV = 0.
 This constant could also be passed in as another input and output, or it could be set to IV = H(0).
 I believe all three approaches are equivalent in the end.
-
-#import "@preview/fletcher:0.4.2" as fletcher: node, edge
 
 #let icc(x, k, y) = [
   #fletcher.diagram(
@@ -963,7 +963,6 @@ then we can use that to complete this step of the proof.
 I want to reformulate the definition of solvable constraints to make it nicer to work with.
 
 #definition("Solvable constraints")[
-  <def_solvable>
   Let $#C$ be a finite set of constraints of dimension $d$,
   and let $#Fixing _0$ be a subspace of #Vd.
   $#C$ is #strong[solvable fixing] $#Fixing _0$ if there exists an ordering
@@ -972,6 +971,7 @@ I want to reformulate the definition of solvable constraints to make it nicer to
 
   Solvability condition: $aa_i in.not Fixing_(i-1) + span(#Q _i) quad$ where $(QQ_i, aa_i) := c_i$
 ]
+<def_solvable>
 
 We call $(c_1 , ... , c_n)$ a solution ordering of $#C$ fixing $Fixing_0$.
 If $Fixing_0 = {0}$ we just say $CC$ is solvable, dropping the "fixing" notation.
@@ -981,11 +981,11 @@ we only have to change the solvability condition.
 It will allow either $mat(kk; xx)$ or $mat(kk; yy)$ to be the query $QQ$.
 
 #definition("Deterministically solvable")[
-  <def_det_solvable>
   Let $#C$ be a solvable set of constraints with solution ordering $(c_1, ..., c_n)$.
   $#C$ is #strong[deterministically solvable fixing] $Fixing_0$ if $Vd = Fixing_0 plus.circle #span[$aa_1, ..., aa_n$]$.
   In other words, we require $d = dim(Fixing_0) + n$ in addition to the solvability condition.
 ]
+<def_det_solvable>
 
 This dimension condition forces $span(QQ_i) in Fixing_(i-1)$,
 which is the condition we previously used in the definition.
@@ -1449,17 +1449,18 @@ TODO flesh out these ideas:
 == New constructs for Linicrypt
 
 The general direction we take is to generalize the Linicrypt structure and see where that leads to.
-Instead of defining what a Linicrypt program is, and then construct its algebraic representation,
-we directly start with the algebraic structure.
-Later we can map the structures back to Linicrypt programs.
-This approach allows us to formally work with invalid Linicrypt programs,
+In Linicrypt we define the syntax and semantics of a Linicrypt program,
+and then construct an algebraic representation for all Linicrypt programs.
+Instead we directly start with the algebraic structure and explore the relationship to Linicrypt programs.
+This approach allows us to work with invalid Linicrypt programs,
 e.g. programs that define the same variable twice forcing the value of different computations to be equal.
 It turns out that cryptographic properties of a program #P can be formulated in terms of such invalid Linicrypt programs.
 
 First we start with basic definitions and notation.
-We will start with a $d$-dimensional vector space over a finite field #F which we write $Vp$.
-This represents the states that a Linicrypt program #P with $d$ base variables can be in.
-It's dual space #Vd will play an important role by representing the variables of a program.
+The basis for this argument is a $d$-dimensional vector space over a finite field #F which we write $Vp$.
+This will represent the states that Linicrypt programs with $d$ base variables can be in.
+The corresponding dual space #Vd will represent the variables of a Linicrypt program.
+Such a variable can be seen as a linear map from the state space $Vp$ to the value it takes in #F for a particular state.
 
 Now we define the concept of an oracle constraint.
 This definition can then be satisfied by different types of constraints like a random oracle constraint or an ideal cipher constraint.
@@ -1471,13 +1472,15 @@ This definition can then be satisfied by different types of constraints like a r
 
   A vector $v$ from $Vp$ is called a solution to $c$ if $H(qq_1 vv, ..., qq_k vv) = aa vv$.
   In this case we also say $v$ solves $c$.
-  The set of such vectors is denoted by $solH(c)$.
+  The set of all these vectors is denoted by $solH(c)$.
+  Explicitly $solH(c) := {vv in Vp | H(qq_1, vv, ..., qq_k vv) = aa vv}$.
   This defines the solution function for random oracle constraints $solH$ mapping constraints to subsets of $Vp$.
 ]
 
-TODO maybe think about adding visualizations.
-
 If it is clear from context about what oracle and what state space we are talking about we will drop these terms from the notation.
+
+Because $H$ is a function,
+the set $solH(c)$ can be understood geometrically as a graph in $Vp$ over the plane orthogonal to $aa$.
 
 #definition("Ideal cipher constraint")[
   Let $IC$ be an instance of an ideal cipher.
@@ -1504,7 +1507,18 @@ $
     then $U + W$ is the subspace containing the vectors $u + w$ where $u in U$ and $w in W$ is arbitrary.
 ]
 
-We define a new security game that works for any oracle model.
+We define a new security game to give a semantic meaning to the constraints.
+To motivate this game,
+we present two examples in the random oracle model.
+Consider $c = qq |-> aa$ where $qq$ and $aa$ are linearly independent.
+Suppose we are given a random value in $FF$ called $q$.
+We are tasked with finding a $vv in Vp$ such that $qq vv = q$ and such that $vv in solH(c)$.
+Because of the linear independence of $qq$ and $aa$ we can find such a $vv$:
+We make the query $H(q)$ and using the resulting value we solve the linear system of equations.
+
+For the second example consider $CC = {qq |-> aa, aa |-> qq}$.
+We can find a solution to one of the two constraints,
+but it becomes hard to find a solution to both of them at the same time.
 
 #definition("Solvability game")[
   Let #CC be a set of constraints with solution function $sol$ over a family of fields $FF_lambda$.
@@ -1512,15 +1526,16 @@ We define a new security game that works for any oracle model.
   #CC is $(q, epsilon)$-unsolvable fixing #Fixing outside of $W$ if for all q-query adversaries $Att$,
   $Pr[sans("SolGame")(CC, Fixing, W, Att, lambda)] <= epsilon$.
 
-  #algo(
-    // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
-    header: $underline(sans("SolGame")(CC, Fixing, W, Att, lambda))$,
-    line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+  #pseudocode-list(
+    booktabs: true,
+    booktabs-stroke: 1pt + black,
+    line-numbering: "1",
+    title: [$sans("SolGame")(CC, Fixing, W, Att, lambda)$],
   )[
-    instantiate an oracle #Ora \
-    $xx <- Vp$ \
-    $vv <- Att^Ora (lambda; xx)$ \
-    return $vv in sol(CC) and vv - xx in Fixing^0 and vv in.not W$
+    + instantiate an oracle #Ora \
+    + $xx <- Vp$ \
+    + $vv <- Att^Ora (lambda; xx)$ \
+    + *return* $vv in sol(CC) and vv - xx in Fixing^0 and vv in.not W$
   ]
 ]
 
@@ -1538,15 +1553,17 @@ When we characterize collision resistance, we will write $vv != vv'$ in terms of
 
 We will use an example to illustrate the meaning of conditions 1 and 2.
 Consider the following Linicrypt program:
-#algo(
-  header: $underline(PP(v_1, v_2))$,
-  line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+#pseudocode-list(
+  booktabs: true,
+  booktabs-stroke: 1pt + black,
+  line-numbering: "1",
+  title: [$PP(x, y)$],
 )[
-  $q_1 = v_1$ \
-  $v_3 = H(q_1)$ \
-  $q_2 = v_2 + v_3$ \
-  $v_4 = H(q_2)$ \
-  return $(v_1, v_2, v_3, v_4)$
+  + $q_1 = v_1$ \
+  + $v_3 = H(q_1)$ \
+  + $q_2 = v_2 + v_3$ \
+  + $v_4 = H(q_2)$ \
+  + *return* $(v_1, v_2, v_3, v_4)$
 ]
 
 It has 4 base variables: $v_1, v_2, v_3, v_4$ and outputs the values of its base variables directly.
@@ -1600,6 +1617,9 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
   $.
 ]
 
+
+
+
 #proof[
   We describe the program $Att$ and prove that it wins $SolGame$.
   Define $Fixing'$ to be a $d-1$ dimensional subspace containing $Fixing + span(qq_1\, ...\, qq_k)$ but not $aa$.
@@ -1620,21 +1640,21 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
   Also $aa BB = mat(0, ..., 1)$.
   
   The following Linicrypt program is the adversary
-  #algo(
-    // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
-    header: $underline(Att^H (xx))$,
-    line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+  #pseudocode-list(
+    booktabs: true,
+    booktabs-stroke: 1pt + black,
+    line-numbering: "1",
+    title: [$Att^H (xx)$],
   )[
-    $v_i := vv_i xx$ where $i=1,...,d-1$ \
-    $q_i := qq_i xx$ where $i=1,...,k$ \
-    $a := H(q_1, ..., q_k)$ \
-    return $BB mat(v_1; ...; v_(d-1); a)$
+    + $v_i := vv_i xx$ where $i=1,...,d-1$ \
+    + $q_i := qq_i xx$ where $i=1,...,k$ \
+    + $a := H(q_1, ..., q_k)$ \
+    + *return* $BB mat(v_1, ..., v_(d-1), a)^top$
   ]
 
   We will show that this $vv = Att^H (xx)$ fulfills the conditions in #SolGame.
 
   Let $bold(alpha) in Fixing' supset.eq Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary.
-  
   Then we have:
   $
     bold(alpha) vv = sum_(i=1)^(d-1) lambda^i vv_i vv
@@ -1781,7 +1801,7 @@ A simple example is $CC = {mat(1, 0, 0) |-> mat(0,0,1), mat(0, 1, 0) |-> mat(0,0
 This is not solvable.
 But applying the linear map with the matrix
 $
-M_f = mat(1,0; 1,0; 0,1)
+  M_f = mat(1,0; 1,0; 0,1)
 $ it becomes solvable.
 Solutions to $CC M_f$ map back to solutions of $CC$ under $f$.
 Note that $sol(CC)$ also contains other solutions, i.e. corresponding to cases when $H(x) = H(y)$ for some $x != y$.
@@ -1811,9 +1831,9 @@ I will use the notation $iota_W$ for the linear map of from a subspace $W$ to it
   there exists a subspace $W$ of $Vp$ with $W subset.eq.not U$ and
   $incWs(CC)$ is solvable (fixing 0).
 
-  If #CC is solvable outside of $W$ then there is an adversary #Att with 
+  If #CC is solvable outside of $W$ then there is an adversary #Att with
   $
-  SolAdv[CC, 0, W, Att] >= 1 - 1/(|FF|).
+    SolAdv[CC, 0, W, Att] >= 1 - 1 / (|FF|).
   $
 
   TODO see if having $W$ outside here is nicer.
@@ -1863,7 +1883,7 @@ TODO try proof general version of 9.3.1
   2. All the queries $c vv$ are actually in $im(Q)$ for all $c in CC$.
     We simply force $Att$ to actually make the queries $c vv$ before it outputs $vv$.
 
-  This means we can define the function 
+  This means we can define the function
   $T: CC -> {1, ..., N}$ by $T(c) = Q^(-1)(c vv)$.
   It represents the query time at which the values for the constraint $c$ are determined.
 
@@ -1871,8 +1891,8 @@ TODO try proof general version of 9.3.1
   we consider the event that the adversary wins and has chosen a particular timing function $T$.
   We have
   $
-    Pr[SolGame(CC, 0, W, Att)] 
-    &= sum_T Pr[SolGame(CC, 0, W, Att) "and" T "is used"] 
+    Pr[SolGame(CC, 0, W, Att)]
+    &= sum_T Pr[SolGame(CC, 0, W, Att) "and" T "is used"]
     &> N^n / (|FF|)
   $
   There are $N^n$ possible mappings $CC -> {1, ..., N}$.
@@ -1894,7 +1914,7 @@ TODO try proof general version of 9.3.1
 
   Consider the embedding map $f: K -> Vp$. We first assert three statements:
   1. $vv$ is in $K$
-  2. If $c vv = c' vv$ then $fs c = fs c'$ 
+  2. If $c vv = c' vv$ then $fs c = fs c'$
   3. $K$ is not a subspace of $W$
 
   Proof of 1.: This is true by definition.
@@ -1905,16 +1925,16 @@ TODO try proof general version of 9.3.1
   Proof of 3.:
   Because $Att$ has won $SolGame[CC, 0, W]$ we know that $vv in.not W$.
   Together with $vv in K$ we have $K subset.eq.not W$.
-  
+
   We now define the map $T': fs CC -> {1, ..., N}$ by $T'(fs c) = Q^(-1)(fs c vv)$.
   This is well defined because $vv$ is in $K$.
   We can prove that it is injective.
   $
-  T'(fs c) = T'(fs c')
-  &=> Q^(-1)(fs c vv) = Q^(-1)(fs c' vv) \
-  &=> fs c vv = fs c' vv quad text("because") Q text("is injective")\
-  &=> c vv = c' vv\
-  &=> fs c = fs c'
+    T'(fs c) = T'(fs c')
+    &=> Q^(-1)(fs c vv) = Q^(-1)(fs c' vv) \
+    &=> fs c vv = fs c' vv quad text("because") Q text("is injective")\
+    &=> c vv = c' vv\
+    &=> fs c = fs c'
   $
 
   Because $T'$ is injective this defines an ordering on $fs CC = {c'_1, ..., c'_(n')}$.
