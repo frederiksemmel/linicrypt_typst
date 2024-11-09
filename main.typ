@@ -1505,6 +1505,7 @@ $
   - We will use the sum of subspaces in the following.
     If $U, W$ are subspaces of $V$,
     then $U + W$ is the subspace containing the vectors $u + w$ where $u in U$ and $w in W$ is arbitrary.
+  - We write the standard basis of $Vd$ as ${ee_1, ..., ee_n}$ where $ee_i = (delta_i)_(i in {1, ..., n})$
 ]
 
 We define a new security game to give a semantic meaning to the constraints.
@@ -1557,44 +1558,43 @@ Consider the following Linicrypt program:
   booktabs: true,
   booktabs-stroke: 1pt + black,
   line-numbering: "1",
-  title: [$PP(x, y)$],
+  title: [$PP(v_1, v_2)$],
 )[
-  + $q_1 = v_1$ \
-  + $v_3 = H(q_1)$ \
-  + $q_2 = v_2 + v_3$ \
-  + $v_4 = H(q_2)$ \
+  + $v_3 = H(v_1)$ \
+  + $v_4 = H(v_2 + v_3)$ \
   + *return* $(v_1, v_2, v_3, v_4)$
 ]
 
 It has 4 base variables: $v_1, v_2, v_3, v_4$ and outputs the values of its base variables directly.
-If we construct the algebraic representation the variables correspond to the dual vectors:
-$
-  v_1 <-> vv_1 = mat(1,0,0,0) \
-  v_2 <-> vv_2 = mat(0,1,0,0) \
-  v_3 <-> vv_3 = mat(0,0,1,0) \
-  v_4 <-> vv_4 = mat(0,0,0,1) \
-$
+Consider the algebraic representation of $PP$.
+In this algebraic representation we write $ee_i$ for the i'th canonical basis vector of $Vd$,
+i.e. the 4 dimensional row vector with all zeros except for a one in the i'th position.
+
 We will look at $SolGame(CC, Fixing, 0)$,
-where we set $CC = {vv_1 |-> vv_3, vv_2 + vv_3 |-> vv_4}$, $Fixing = span(vv_1\, vv_2)$.
-So the game poses the challenge of finding solutions to the constraints $CC$ while choosing the value for the variables $v_1$ and $v_2$ at random.
+where we set $CC = {ee_1 |-> ee_3, ee_2 + ee_3 |-> ee_4}$ and $Fixing = span(ee_1\, ee_2)$.
+So the game poses the challenge of finding solutions to the constraints $CC$
+while the value for the variables $v_1$ and $v_2$ are fixed at random.
 
 It becomes clear that $PP$ itself corresponds to a successful adversary to $SolGame(CC, Fixing, 0)$.
 The game chooses $xx$ at random.
-We input $(vv_1 xx, vv_2 xx)$ into $PP$ and it outputs the vector $vv = mat(v_1,v_2,v_3,v_4)^top in Vp$.
+We input $(ee_1 xx, ee_2 xx)$ into $PP$ and it outputs the vector $vv = mat(v_1,v_2,v_3,v_4)^top in Vp$.
 This $vv$ is in $sol(CC)$:
 $
-  vv_3 vv = v_3 = H(q_1) = H(v_1) = H(vv_1 vv) quad &==> quad  vv in sol(vv_1 |-> vv_3) \
-  vv_4 vv = v_4 = H(q_2) = H(v_2 + v_3) = H((vv_2 + vv_3) vv)  quad &==> quad  vv in sol(vv_2 + vv_3 |-> vv_4) 
+  ee_3 vv = v_3 = H(v_1) = H(ee_1 vv) quad &==> quad  vv in sol(ee_1 |-> ee_3) \
+  ee_4 vv = v_4 = H(v_2 + v_3) = H((ee_2 + ee_3) vv)  quad &==> quad  vv in sol(ee_2 + ee_3 |-> ee_4) 
 $
-Also, $vv - xx = (0,0,v_3, v_4)$ is in $Fixing^0$,
+Also, $vv - xx = mat(0,0,v_3, v_4)^top$ is in $Fixing^0$,
 so condition 2. is fulfilled.
-Condition 3. is almost certainly fulfilled.
-The only case where condition 3. is not fulfilled would be when $vv = 0$ which happens with probability $1 / (|FF|^d)$.  
+Condition 3. $vv in.not W$ is almost certainly fulfilled.
+The only case where condition 3. is not fulfilled would be when $vv = 0$ which happens with probability $1 / (|FF|^4)$.  
 
 We could also consider a different $Fixing$.
-If we set $Fixing' = span(vv_1\, vv_4)$,
-then an adversary to $SolGame(CC, Fixing', 0)$ is able to compute inverses of the program $PP'(v_1, v_2) = (v_1, H(v_2 + H(v_1)))$.
-In this case, such an adversary exists.
+If we set $Fixing' = span(ee_1\, ee_4)$,
+then an adversary to $SolGame(CC, Fixing', 0)$ would be able to compute inverses
+of the program $PP'(v_1, v_2) = (v_1, H(v_2 + H(v_1)))$.
+This is the same program as before, but it outputs only $v_1$ and $v_4$.
+Therefore a condition to determine if $SolGame$ has adversaries,
+would determine if $PP'$ is invertible or not.
 
 The usefulness of having $W$ in the definition will become clear later when we characterize collision resistance.
 
@@ -1630,23 +1630,22 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
   
   This is possible because $aa$ is assumed to be outside of $Fixing + span(qq_1\, ...\, qq_k)$.
   We choose a basis of $Fixing'$ and we call it
-  $vv_1, ..., vv_(d-1)$.
+  $bb_1, ..., bb_(d-1)$.
   Then we define the matrix #BB via the equation
   $
-    BB^(-1) = mat(vv_1; ...; vv_(d-1); aa).
+    BB^(-1) = mat(bb_1; ...; bb_(d-1); aa).
   $
   The matrix on the right is square and full rank and invertible, therefore $BB$ is well defined this way.
-  Note that $vv_i BB = mat(0,...,1, ..., 0)$ where the 1 is at the i'th position.
-  Also $aa BB = mat(0, ..., 1)$.
+  Note that $bb_i BB = ee_i$ and $aa BB = ee_d$ where ${ee_1, ..., ee_d}$ is the standard basis of $Vd$.
   
-  The following Linicrypt program is the adversary
+  The following Linicrypt program is the adversary to the game $SolGame({c}, Fixing, 0)$.
   #pseudocode-list(
     booktabs: true,
     booktabs-stroke: 1pt + black,
     line-numbering: "1",
     title: [$Att^H (xx)$],
   )[
-    + $v_i := vv_i xx$ where $i=1,...,d-1$ \
+    + $v_i := bb_i xx$ where $i=1,...,d-1$ \
     + $q_i := qq_i xx$ where $i=1,...,k$ \
     + $a := H(q_1, ..., q_k)$ \
     + *return* $BB mat(v_1, ..., v_(d-1), a)^top$
@@ -1654,13 +1653,13 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
 
   We will show that this $vv = Att^H (xx)$ fulfills the conditions in #SolGame.
 
-  Let $bold(alpha) in Fixing' supset.eq Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary.
+  Let $bold(alpha) in Fixing' supset.eq Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary, i.e. $bold(alpha) = sum_(i=1)^(d-1) lambda^i bb_i$.
   Then we have:
   $
-    bold(alpha) vv = sum_(i=1)^(d-1) lambda^i vv_i vv
-    = sum_(i=1)^(d-1) lambda^i vv_i BB mat(v_1; ...; v_(d-1); a)
+    bold(alpha) vv = sum_(i=1)^(d-1) lambda^i bb_i vv
+    = sum_(i=1)^(d-1) lambda^i bb_i BB mat(v_1; ...; v_(d-1); a)
     = sum_(i=1)^(d-1) lambda^i v_i
-    = sum_(i=1)^(d-1) lambda^i vv_i xx
+    = sum_(i=1)^(d-1) lambda^i bb_i xx
     = bold(alpha) xx
   $
   This means that the variables in $Fixing'$ take the same values for each pair of state vectors $xx$ and $vv = PP(xx)$.

@@ -66,6 +66,7 @@
 #let yy = $bold(y)$
 #let Proj = $bold(P)$
 #let MM = $bold(M)$
+#let ee = $bold(e)$
 
 // maps
 #let ff = $f$
