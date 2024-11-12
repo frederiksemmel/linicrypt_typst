@@ -1344,7 +1344,9 @@ TODO flesh out these ideas:
   in which the constraints of $f^*(Cjoin)$ collapse.
   For each subspace, if the
 
-== Notes and ideas, in random order
+= Notes and ideas, in random order
+
+== About August 2024
 - Second preimage resistance and collision resistance loose their relationship for unsolvable constraints.
   We can find unsolvable constraints where its easy to find a second solution, if we are given a solution.
   But its hard to find a solution in the first place.
@@ -1397,6 +1399,126 @@ TODO flesh out these ideas:
   Remove fixing and outside parts.
   Then maybe we can define that terminology
 
+== 2024-11-10
+Working on understanding the security side better.
+The proof of the unsolvability theorem is limited to a specific random oracle model.
+Also, I am still unsure how to completely formalize the argument with focusing on a specific timing funciton $T$.
+
+The problems I see:
+- Security proof is not completely formal yet I think.
+  We use this assumption of kowing the timing function $T$ beforehand and union bounding over all possible $T$.
+  Then we construct $T'$ from that for the collapsed problem $fs CC$ and work with that.
+  All this is a bit shady.
+- It would be very cool to do a reduction to a weaker model than the ROM
+- The bound of $N^n / (|FF|)$ is not tight at all.
+  When we use this bound to describe collision resistance we get $N^(2n) / (|FF|)$ (n the number of inputs).
+  #MD construction for example is a lot better with $N^(2) / (|FF|)$.
+- It would be ideal if we can find a formula, maybe recursive, for the bound.
+  This formula would depend on the structure of $CC$.
+
+
+=== Examples where the bound is not tight
+In the following I will use dual vectors called for example $ee_1, ee_2, ...$ without explicitly defining them.
+They are supposed to be linearly independent elements of the dual space.
+One can take them to be the standard basis of $Vd$.
+The dimension of the dual space doesn't matter,
+as long as it is big enough for the amount of independent vectors that we define.
+
+==== Example 1
+$CC = {ee_1 |-> ee_2, ee_2 |-> 0}$
+
+The best adversary I can think of works like this:
+1. Call $H$ and store $a_0 := H(0)$. If $a_0 = 0$, then nice, we found the solution $vv = mat(0, 0)^top in sol(CC)$
+2. If not, set $a_1 := H(a_0)$. If $a_1 = 0$, then return the solution $vv = mat(0, a_0)^top in sol(CC)$
+3. If not, set $a_i := H(a_(i-1))$. If $a_i = 0$, then return the solution $vv = mat(a_(i-2), a_(i-1))^top in sol(CC)$
+4. Repeat
+
+Every time this algorithm $Att$ calls $H$ it has a $1 / (|FF|)$ chance of winning the game.
+Therefore $SolAdv(CC, 0, 0, Att) <= N / (|FF|)$.
+This is worse than the theorem predicts by a factor of $N$.
+I can't prove it, but I think this is the best adversary against this game.
+This instance of $SolGame$ seems to be harder than what the theorem says.
+
+We loose "efficiency" in the proof,
+because we only look at on query where the adversary has to get lucky.
+For some orderings of $CC$ the adversary has to get lucky multiple times.
+In this case the adversary should aim to determine first $ee_1 vv$ and then $ee_2 vv$,
+because finding a solution to the second query,
+which is already hard,
+leaves you with an equally hard problem of solving the first query.
+
+==== Example 2
+$CC = {ee_1 |-> ee_3, ee_2 |-> -ee_3}$
+
+For this $CC$ the bound from the theorem is tight.
+An attack against $SolGame(CC, 0, 0)$ is equivalent to the birthday attack.
+This follows from the lower bound of the birthday attack.
+A relatively successful adversary just queries $H$ on $0, 1, 2, ...$.
+The adversary wins if $H(i) in {0, -H(0), -H(1), ..., -H(i-1)}$.
+We can calculate $SolAdv(CC, 0, 0, Att) >= N^2 / (4|FF|)$
+
+==== Example 3
+$CC = {ee_1 |-> 0, 2 ee_1 |-> 0}$
+
+This is a set of constraints that is very hard to solve.
+If $vv = mat(x) in sol(CC)$ then $H(x) = 0$ and $H(2x) = 0$.
+It seems like any adversary would have to be really lucky twice.
+A sensible strategy would be:
+If $H(0) = 0$, great. If not:
+Find an $x$ such that $H(x) = 0$.
+Then try your luck at $H(2x)$ and $H(x/2)$.
+The if the second query returns 0, then $Att$ outputs $mat(x/2)$.
+
+So for this adversary we have $SolAdv(CC, 0, 0, Att) <= 2 / (|FF|^2)$.
+It is hard to imagine a smarter strategy than that for this simple setof constraints.
+
+==== Example 4
+$CC = {0 |-> 0}$
+
+This is a really stupid example.
+Any adversary wins if and only if $H$ is such that $H(0) = 0$.
+
+Therefore $SolAdv(CC, 0, 0) = 1/(|FF|)$ which is a tighter bound than $SolAdv(CC, 0, 0) <= N / (|FF|)$.
+
+
+So, I think between the sets of constraints that are completely unsolvable,
+there are differences in how hard they are to solve.
+
+
+=== Reducing Unsolvability theorem to loops
+
+This is an idea that does not yet go anywhere useful... 
+
+My goal is to make the Unsolvability theorem work for multiple oracle models at the same time.
+For that I try to encapsulate the security of a particular oracle model behind some "interface".
+This interface could be connected to the idea of "loops".
+
+I call a loop a set of constraints like this ${ee_1 |-> ee_2, ee_2 |-> ee_3, ee_3 |-> ee_1}$.
+The simplest loop would be ${0 |-> 0}$.
+Loops are completely unsolvable: There is no subspace such that projecting into that subspace gives a solvable set of constraints.
+Loops correspond in a sense to fixed points of the oracle:
+- $mat(x) in sol(ee_1 |-> ee_1) <==> H(x) = x$ 
+- $mat(x, H(x))^top in sol(ee_1 |-> ee_2, ee_2 |-> ee_1) <==> H(H(x)) = x$ 
+
+My hope was that we can just require the oracle to be such that finding solutions to loops is hard,
+i.e. the oracle has no fixed points,
+and then reduce the security proof to this property.
+
+=== Issue 1
+In general, there are constraints like $CC = {ee_1 |-> ee_2, 2ee_2 |-> ee_1}$
+which have to be regarded as these loops for which its assumed to be hard to find solutions.
+This we could fix by just adding all these sets to what we call loops.
+Maybe projective spaces are useful here to describe this.
+
+=== Issue 2
+I don't think we can say: A set of constraints is completely unsolvable,
+if and only if it contains a loop.
+
+The condition _completely unsovable_ has to be NP-hard to check.
+This follows (I think), from the result of the previous Linicrypt paper on block ciphers.
+They proved that one can embed one in three satisfiability into a Linicrypt program.
+Detecting a loop or anything in similar style seems to be easy to check.
+
 = Meeting Notes
 
 == Meeting 28.08.2024
@@ -1425,12 +1547,9 @@ TODO flesh out these ideas:
 = Next steps
 
 == Attack side
-=== Short term
 - Try to model fixed point attacks like this.
   Additionally to the solvability rules we add: $mat(xx) -> mat(xx)$ is solvable fixing $Fixing$ if $xx$ is not in $Fixing$
 - Apply this to the PGV compression functions and see which are insecure
-
-== Longer term
 - derive a Linicrypt categorization of the PGV functions
 
 
@@ -1577,35 +1696,40 @@ while the value for the variables $v_1$ and $v_2$ are fixed at random.
 
 It becomes clear that $PP$ itself corresponds to a successful adversary to $SolGame(CC, Fixing, 0)$.
 The game chooses $xx$ at random.
-We input $(ee_1 xx, ee_2 xx)$ into $PP$ and it outputs the vector $vv = mat(v_1,v_2,v_3,v_4)^top in Vp$.
+We set the input of $PP$ to $(ee_1 xx, ee_2 xx)$ get the output $vv = mat(v_1,v_2,v_3,v_4)^top in Vp$.
 This $vv$ is in $sol(CC)$:
 $
   ee_3 vv = v_3 = H(v_1) = H(ee_1 vv) quad &==> quad  vv in sol(ee_1 |-> ee_3) \
-  ee_4 vv = v_4 = H(v_2 + v_3) = H((ee_2 + ee_3) vv)  quad &==> quad  vv in sol(ee_2 + ee_3 |-> ee_4) 
+  ee_4 vv = v_4 = H(v_2 + v_3) = H((ee_2 + ee_3) vv)  quad &==> quad  vv in sol(ee_2 + ee_3 |-> ee_4)
 $
 Also, $vv - xx = mat(0,0,v_3, v_4)^top$ is in $Fixing^0$,
 so condition 2. is fulfilled.
 Condition 3. $vv in.not W$ is almost certainly fulfilled.
-The only case where condition 3. is not fulfilled would be when $vv = 0$ which happens with probability $1 / (|FF|^4)$.  
+The only case where condition 3. is not fulfilled would be when $vv = 0$ which happens with probability $1 / (|FF|^4)$.
 
 We could also consider a different $Fixing$.
 If we set $Fixing' = span(ee_1\, ee_4)$,
 then an adversary to $SolGame(CC, Fixing', 0)$ would be able to compute inverses
 of the program $PP'(v_1, v_2) = (v_1, H(v_2 + H(v_1)))$.
 This is the same program as before, but it outputs only $v_1$ and $v_4$.
-Therefore a condition to determine if $SolGame$ has adversaries,
+Therefore a general condition to determine if $SolGame$ has adversaries,
 would determine if $PP'$ is invertible or not.
 
+TODO get back to this inversion example later when we have the condition.
+
 The usefulness of having $W$ in the definition will become clear later when we characterize collision resistance.
+It turns out, that collision resistance can be formulated in terms of a $SolGame$.
+We will create two copies of a linicrypt program and "collapse" their outputs.
+Then we try to find solutions to the collapsed constraints.
+Using the same inputs to both copies will of course yield solutions to the collapsed constraints,
+so we need to use $W$ to specify that solutions should lie outside of this subspace.
 
 These examples motivate the question:
-What are the algebraic conditions on $CC$, $Fixing$ and $W$ such that there exists an adversary to $SolGame(CC, Fixing, W)$.
-It turns out,
-that such a condition exists.
-If this condition is met,
-one can construct a successful adversary against $SolGame$.
-But we conjecture that checking whether the condition is met is NP-Hard in the general case.
-
+What are the algebraic conditions on $CC$, $Fixing$ and $W$
+such that there exists a query efficient adversary to $SolGame(CC, Fixing, W)$.
+We describe this condition
+and derive a method to construct a successful adversary against a $SolGame$ that meets the condition.
+// But we conjecture that checking whether the condition is met is NP-Hard in the general case.
 
 #lemma("solvability of random oracle constraint")[
   Let $c = qq_1, ..., qq_k |-> aa$ be a random oracle constraint and $Fixing$ a subspace of $Vd$.
@@ -1623,11 +1747,11 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
 #proof[
   We describe the program $Att$ and prove that it wins $SolGame$.
   Define $Fixing'$ to be a $d-1$ dimensional subspace containing $Fixing + span(qq_1\, ...\, qq_k)$ but not $aa$.
-  
+
   TODO consider using this
   $Fixing' = Vd - aa$.
-  TODO is this well defined? There are many possible d-1 dimensional subspaces of $Vd$ without $aa$. 
-  
+  TODO is this well defined? There are many possible d-1 dimensional subspaces of $Vd$ without $aa$.
+
   This is possible because $aa$ is assumed to be outside of $Fixing + span(qq_1\, ...\, qq_k)$.
   We choose a basis of $Fixing'$ and we call it
   $bb_1, ..., bb_(d-1)$.
@@ -1635,9 +1759,10 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
   $
     BB^(-1) = mat(bb_1; ...; bb_(d-1); aa).
   $
-  The matrix on the right is square and full rank and invertible, therefore $BB$ is well defined this way.
+  The matrix on the right is square and full rank,
+  therefore $BB$ is well defined.
   Note that $bb_i BB = ee_i$ and $aa BB = ee_d$ where ${ee_1, ..., ee_d}$ is the standard basis of $Vd$.
-  
+
   The following Linicrypt program is the adversary to the game $SolGame({c}, Fixing, 0)$.
   #pseudocode-list(
     booktabs: true,
@@ -1653,7 +1778,7 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
 
   We will show that this $vv = Att^H (xx)$ fulfills the conditions in #SolGame.
 
-  Let $bold(alpha) in Fixing' supset.eq Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary, i.e. $bold(alpha) = sum_(i=1)^(d-1) lambda^i bb_i$.
+  First consider some $bold(alpha) in Fixing' supset.eq Fixing + span(qq_1\, ... \, qq_k)$ be arbitrary, i.e. $bold(alpha) = sum_(i=1)^(d-1) lambda^i bb_i$.
   Then we have:
   $
     bold(alpha) vv = sum_(i=1)^(d-1) lambda^i bb_i vv
@@ -1662,7 +1787,8 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
     = sum_(i=1)^(d-1) lambda^i bb_i xx
     = bold(alpha) xx
   $
-  This means that the variables in $Fixing'$ take the same values for each pair of state vectors $xx$ and $vv = PP(xx)$.
+  This means that the variables in $Fixing'$ take the same values
+  for the state vectors $xx$ and $vv = Att^H (xx)$.
   In particular, condition 2. is fulfilled:
   Let $bold(alpha) in Fixing subset.eq Fixing'$ be arbitrary. Then $bold(alpha) (vv - xx) = 0$,
   and hence $vv - xx$ is in $Fixing^0$.
@@ -1674,11 +1800,11 @@ But we conjecture that checking whether the condition is met is NP-Hard in the g
     ) = H(qq_1 vv, ..., qq_k vv)
   $
   The last equation holds because $qq_i$ is in $Fixing'$ by definition.
-  
+
   Condition 3., in this case $vv != 0$,
   is almost always fulfilled except if the adversary is extremely unlucky.
   For that to happen, at the very least $a$ needs to be zero, which happens with probability $1/(|FF|)$.
-  
+
   TODO this last argument is handwavy, needs to be fixed together with the other TODOs connected to this.
 ]
 
@@ -1692,26 +1818,32 @@ If $c = xx <-->^(#move(dy: 1.7pt, kk)) yy$ then $span(c) := span(xx\, kk\, yy)$.
 
 #corollary[
   Let $#CC = {c_1, ..., c_n}$ be a set of constraints, ordered by their index.
-  Let $Fixing_0$ be a subspace of $Vd$,
-  and define $Fixing_i = Fixing_(i-1) + span(c_i)$.
+  Let $Fixing_0$ be a given subspace of $Vd$,
+  and we define $Fixing_i = Fixing_(i-1) + span(c_i)$.
   We say $CC$ is solvable fixing $Fixing_0$ if $c_i$ is solvable fixing $Fixing_(i-1)$ for every $i=1,...,n$.
 
-  Then there exists a n-query adversary $Att$ with
-  $Pr[sans("SolGame")(CC, Fixing_0, 0, Att, lambda)] >= 1 - 1/ (|FF| ^ d)$.
+  If $CC$ is solvable fixing $Fixing_0$ there exists a n-query adversary $Att$ with
+  $ Pr[sans("SolGame")(CC, Fixing_0, 0, Att, lambda)] >= 1 - 1/ (|FF| ^ d). $
 ]
 
 TODO analyze condition 3. more precisely to get $|FF| ^d$.
 
 
 #proof[
-  Because $c_i$ is solvable fixing $Fixing_(i-1)$, we get an adversary $Att_i$ for $i=1,...,n$ with $SolAdv[Att_i, {c_i}, Fixing_(i-1), 0] >= 1/(|FF|)$.
-  We construct the adversary
+  The $SolGame$ was defined in such a way that we can compose the attacks for each constraint
+  to get an attack for all the constraint.
+
+  Because $c_i$ is solvable fixing $Fixing_(i-1)$,
+  we get an adversary $Att_i$ for each $i=1,...,n$
+  with $SolAdv({c_i}, Fixing_(i-1), 0, Att_i) >= 1/(|FF|)$.
+  We construct the adversary $Att$ by setting
   $Att = Att_n compose ... compose Att_1$.
-  Let $vv = Att(xx)$ and $vv_i = Att_i compose ... compose Att_1$.
+  Let $vv = Att(xx)$ and $vv_i = Att_i compose ... compose Att_1(xx)$.
   We also define $vv_0 = xx$ to simplify the notation.
 
   Note that $vv_i$ is contained in $sol(c_i)$.
   Also, $vv_i - vv_(i-1) in (Fixing_(i-1))^0 supset.eq span(c_(i-1))^0 sect ... sect span(c_1)^0$.
+  TODO make this induction explicit and still efficient.
   By induction we have $vv_i in sol(c_i) sect sol(c_(i-1)) sect ... sect sol(c_1) = sol({c_i, ..., c_1})$.
 
   Because $Fixing_0 subset.eq Fixing_(i-1)$ we know that $vv_i - vv_(i-1) in (Fixing_0)^0$ for all $i=1,...,n$.
@@ -1909,31 +2041,36 @@ TODO try proof general version of 9.3.1
   This is a bit of abuse in notation which we clarify now.
   If $c$ and $c'$ are constraints of different oracle type we set $ker(c-c') = Vp$.
   Otherwise $ker(c - c') = {vv in Vp | c vv = c' vv}$.
+
   TODO add what $c vv = c' vv$ means to the definition of $c$ (its just component-wise equality).
+
+  TODO explain why $K$ is a subspace
 
   Consider the embedding map $f: K -> Vp$. We first assert three statements:
   1. $vv$ is in $K$
   2. If $c vv = c' vv$ then $fs c = fs c'$
-  3. $K$ is not a subspace of $W$
+  3. $K$ is not contained in $W$
 
   Proof of 1.: This is true by definition.
 
   Proof of 2.:
-  Let $ww in K$ arbitrary then $(fs c) ww = c ff ww = c' ff ww = (fs c) ww$.
+  Assume that $c$ and $c'$ are such that $c vv = c' vv$.
+  By the defintion of $K$ we the space $ker(c - c')$ contains $K$.
+  Let $ww in K$ arbitrary then $(fs c) ww = c ff ww = c ww = c' ww = (fs c') ww$.
 
   Proof of 3.:
   Because $Att$ has won $SolGame[CC, 0, W]$ we know that $vv in.not W$.
   Together with $vv in K$ we have $K subset.eq.not W$.
 
   We now define the map $T': fs CC -> {1, ..., N}$ by $T'(fs c) = Q^(-1)(fs c vv)$.
-  This is well defined because $vv$ is in $K$.
+  This is well defined because $vv$ is in $K$ and therefore $fs c vv = c vv in im(Q)$.
   We can prove that it is injective.
   $
     T'(fs c) = T'(fs c')
-    &=> Q^(-1)(fs c vv) = Q^(-1)(fs c' vv) \
-    &=> fs c vv = fs c' vv quad text("because") Q text("is injective")\
-    &=> c vv = c' vv\
-    &=> fs c = fs c'
+    &==> Q^(-1)(fs c(vv)) = Q^(-1)(fs c'(vv)) \
+    &==> fs c(vv) = fs c'(vv) quad text("because") Q text("is injective")\
+    &==> c vv = c' vv quad text("because") f vv = vv text("as") vv text("is in") K \
+    &==> fs c = fs c'
   $
 
   Because $T'$ is injective this defines an ordering on $fs CC = {c'_1, ..., c'_(n')}$.
@@ -1951,4 +2088,3 @@ TODO try proof general version of 9.3.1
   Therefore the probability that $H(q_1, ..., q_k) = aa vv$ is equal to $1 / (|FF|)$.
   This is the contradiction we needed to prove that $CC$ is indeed solvable outside of $W$.
 ]
-

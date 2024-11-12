@@ -38,6 +38,8 @@
 #let IC = $E$
 #let SolGame = $sans("SolGame")$
 
+#let MD = "Merkle Dåmgard"
+
 // matrix stuff
 #let vv = $bold(v)$
 #let ww = $bold(w)$
