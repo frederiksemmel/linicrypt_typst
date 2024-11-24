@@ -1,6 +1,6 @@
 // #import "@preview/commute:0.2.0": node, arr, commutative-diagram
 #import "@preview/fletcher:0.5.2" as fletcher: diagram, node, edge
-#import "@preview/algo:0.3.3": algo, i, d, comment, code
+#import "@preview/algo:0.3.4": algo, i, d, comment, code
 #import "@preview/lovelace:0.3.0": *
 
 #import "lib/template_fs.typ": *
@@ -1991,6 +1991,101 @@ Not necessary for the CR characterization, but for 2PR it is.
 
 TODO try proof general version of 9.3.1
 
+#theorem("Unsolvability New")[
+  Let #CC be a set of constraints which is unsolvable outside of a subspace $W$ of $Vp$.
+  Let $Att$ be an arbitrary adversary, then
+  $
+    SolAdv[CC, 0, W, Att] <= N^n sup {SolAdv[c, Fixing, W, Att'] | c "is unsolvable fixing" Fixing }.
+  $
+  In the case that all constraints are $H$-constraints, we have
+  $
+    SolAdv[CC, 0, W, Att] <= N^n / (|FF|).
+  $
+  In the case that all constraints are $E$-constraints, we have
+  $
+    SolAdv[CC, 0, W, Att] <= N^n / (|FF| - N).
+  $
+]
+
+#sketch[
+  We define a series of events and show implications between them.
+  Let $A$ denote the event that $Att$ wins $SolGame(CC, 0, W)$.
+  Each point in $A$ corresponds to $Att$ outputting a solution $vv$ to $CC$ outside of $W$.
+  From the solution and the protocol of $Att$ and $Ora$ we can construct the map $T: CC -> {1, ..., N}$.
+  TODO explain how to construct T and what it means.
+  Define the event $A_T$ to be $Att$ wins while unsing the mapping $T$.
+  We have
+  $ A = union.big.sq_T A_T $
+  because each win maps to a unique T.
+  Therefore $Pr[A] = sum_T Pr[A_T]$.
+
+  We will consider the event $A_T$ for a given $T: CC -> {1, ..., N}$.
+  This $T$ might not be injective.
+  If it was, we could use $Att$ to build an attacker against a specific unsolvable constraint.
+  Consider the following subspace of $Vp$:
+  $
+    U = sect.big_(c, c' in CC \ T(c) = T(c')) span(c - c')^0
+  $
+  If $T$ was injective we would have $U = V$.
+  Consider the embedding $f: U arrow.hook Vp$.
+  We will use it to show that $Att$ implies an attack on $f^* CC$.
+
+  Claims:
+  + Any output $vv$ of $Att$ using $T$ that wins $SolGame(CC, 0, W)$ is in $U$
+  + $U$ is not contained in $W$
+  + $T(c) = T(c')$ is equivalent to $fs c = fs c'$ 
+
+  Proof of 1.: We are considering the event $A_T$.
+  Therefore $Att$ found a $vv$ in $sol(CC)$ outside of $W$.
+  But we can show that $vv$ is in $U$, hence claim 1. follows.
+  Let $c, c'$ be such that $T(c) = T(c')$.
+  Then $c vv = c' vv$ and equivalently $vv in span(c - c')^0$, so $vv$ is in $U$.
+
+  Proof of 2.: Assume $T(c) = T(c')$. Let $uu$ be arbitrary in $U$.
+  Then we have $fs c uu = c f uu = c uu = c' uu = c' f uu = fs c' uu$.
+  Therefore $fs c = fs c'$.
+
+  Now assume $fs c = fs c'$.
+  This means for all $uu in U$ we have $c uu = c' uu$.
+  In particular also for the $vv$ that $Att$ has outputted, so $T(c) = T(c')$.
+
+  Consider the game $SolGame(fs CC, 0, W sect U)$.
+
+  We build an adversary called $Att'$ which takes a $xx$ in $U$ as input.
+
+  #pseudocode-list(booktabs: true, title: $Att'(xx)$)[
+    + $vv = Att(f(xx))$
+    + if $vv in U$ *return* $f^(-1)(vv)$ else *return* $bot$
+  ]
+
+  We will show that being in the event $A_T$ implies that $Att'$ wins at $SolGame(fs CC, 0, W sect U)$.
+  Assume we are in $A_T$, so $Att$ has returned a $vv in sol(CC)$ and is using the timing function $T$.
+  This implies $vv$ is in $U$ and $Att'$ returns $f^(-1)(vv)$.
+  Let $fs c$ be a constraint in $fs CC$.
+  Then $finv(vv) "solves" fs c <=> vv "solves" c$, hence $finv(vv) in sol(fs CC)$.
+  It follows from $vv in.not W$ that $finv(vv) in.not W sect U$.
+  So the event $A_T$ implies that $SolGame(fs CC, 0, W sect U, Att') = 1$.
+  We get 
+  $
+    Pr[A_T] <= SolAdv(fs CC, 0, W sect U, Att')
+  $
+
+  Consider the timing function for $Att'$ called $T': fs CC -> {1, ..., N}$.
+  In the event $A_T$ we can compute $T'(fs c) = Q^(-1)(fs c finv(vv)) = T(c)$.
+  From claim 2. it follows that this $T'$ is actually injective.
+  This induces an ordering on $fs CC$ which we will write as $fs CC = {c'_1, ..., c'_n'}$
+
+  Now we can finally apply the assumption that $CC$ is unsolvable outside of $W$.
+  By definition, this implies that $fs CC$ is not solvable.
+  Therefore there has to be a constraint $c'_(i^*)$ in $fs CC$ such that 
+  $fs c$ is not solvable fixing $span(c'_1\, ...\, c'_(i^* - 1))$.
+
+  Because $T'$ is injective,
+  we know that all the values of $c'_i (f^(-1)(vv))$ have already been determined for $i in {1, ..., i^* - 1}$
+  at the time when $Att'$ makes its $T(c'_(i^*))$'th query.
+
+]
+
 #theorem("Unsolvability")[
   Let #CC be a set of constraints and $W$ a subspace of $Vp$.
   Assume that there is an adversary $Att$ with
@@ -2003,6 +2098,7 @@ TODO try proof general version of 9.3.1
 #proof[
   The strategy is to consider the event that #Att wins the game and
   bound this probability from above assuming $CC$ is not solvable outside of $W$.
+  This will be done by bounding the probability of equivalent events for solving a mapped $CC$ and modified adversary.
 
   So we assume $Att(xx) = vv$ is a winning solution to $SolGame[CC, 0, W]$ and $Att$ made $N$ queries to an oracle.
   Since we can observe the interaction of #Att with the oracles we can

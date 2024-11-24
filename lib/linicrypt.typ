@@ -69,10 +69,12 @@
 #let Proj = $bold(P)$
 #let MM = $bold(M)$
 #let ee = $bold(e)$
+#let uu = $bold(u)$
 
 // maps
 #let ff = $f$
 #let fs = $f^*$
+#let finv = $f^(-1)$
 #let incU = $iota_U$
 #let incUs = $iota_U^*$
 #let incW = $iota_W$
