@@ -1455,7 +1455,7 @@ An attack against $SolGame(CC, 0, 0)$ is equivalent to the birthday attack.
 This follows from the lower bound of the birthday attack.
 A relatively successful adversary just queries $H$ on $0, 1, 2, ...$.
 The adversary wins if $H(i) in {0, -H(0), -H(1), ..., -H(i-1)}$.
-We can calculate $SolAdv(CC, 0, 0, Att) >= N^2 / (4|FF|)$
+We can calculate $SolAdv(CC, 0, 0, Att) <= N^2 / (4|FF|)$
 
 ==== Example 3
 $CC = {ee_1 |-> 0, 2 ee_1 |-> 0}$
