@@ -1401,12 +1401,12 @@ TODO flesh out these ideas:
 
 == 2024-11-10
 Working on understanding the security side better.
-The proof of the unsolvability theorem is limited to a specific random oracle model.
-Also, I am still unsure how to completely formalize the argument with focusing on a specific timing funciton $T$.
+The proof of the Unsolvability theorem is limited to a specific random oracle model.
+Also, I am still unsure how to completely formalize the argument with focusing on a specific timing function $T$.
 
 The problems I see:
 - Security proof is not completely formal yet I think.
-  We use this assumption of kowing the timing function $T$ beforehand and union bounding over all possible $T$.
+  We use this assumption of knowing the timing function $T$ beforehand and union bounding over all possible $T$.
   Then we construct $T'$ from that for the collapsed problem $fs CC$ and work with that.
   All this is a bit shady.
 - It would be very cool to do a reduction to a weaker model than the ROM
@@ -1470,7 +1470,7 @@ Then try your luck at $H(2x)$ and $H(x/2)$.
 The if the second query returns 0, then $Att$ outputs $mat(x/2)$.
 
 So for this adversary we have $SolAdv(CC, 0, 0, Att) <= 2 / (|FF|^2)$.
-It is hard to imagine a smarter strategy than that for this simple setof constraints.
+It is hard to imagine a smarter strategy than that for this simple set of constraints.
 
 ==== Example 4
 $CC = {0 |-> 0}$
@@ -1514,7 +1514,7 @@ Maybe projective spaces are useful here to describe this.
 I don't think we can say: A set of constraints is completely unsolvable,
 if and only if it contains a loop.
 
-The condition _completely unsovable_ has to be NP-hard to check.
+The condition _completely unsolvable_ has to be NP-hard to check.
 This follows (I think), from the result of the previous Linicrypt paper on block ciphers.
 They proved that one can embed one in three satisfiability into a Linicrypt program.
 Detecting a loop or anything in similar style seems to be easy to check.
@@ -1719,7 +1719,7 @@ TODO get back to this inversion example later when we have the condition.
 
 The usefulness of having $W$ in the definition will become clear later when we characterize collision resistance.
 It turns out, that collision resistance can be formulated in terms of a $SolGame$.
-We will create two copies of a linicrypt program and "collapse" their outputs.
+We will create two copies of a Linicrypt program and "collapse" their outputs.
 Then we try to find solutions to the collapsed constraints.
 Using the same inputs to both copies will of course yield solutions to the collapsed constraints,
 so we need to use $W$ to specify that solutions should lie outside of this subspace.
@@ -1805,7 +1805,7 @@ and derive a method to construct a successful adversary against a $SolGame$ that
   is almost always fulfilled except if the adversary is extremely unlucky.
   For that to happen, at the very least $a$ needs to be zero, which happens with probability $1/(|FF|)$.
 
-  TODO this last argument is handwavy, needs to be fixed together with the other TODOs connected to this.
+  TODO this last argument is hand wavy, needs to be fixed together with the other TODOs connected to this.
 ]
 
 TODO include $span(c_i)$ in the definition of the oracle constraint.
@@ -1852,7 +1852,7 @@ TODO analyze condition 3. more precisely to get $|FF| ^d$.
 
   Condition 3. is almost always fulfilled except if all the calls to the oracle return 0 by chance.
 
-  TODO this is the same handwavy argument as before, need to fix it.
+  TODO this is the same hand wavy argument as before, need to fix it.
 ]
 
 TODO Connect this corollary to collision structure.
@@ -2013,7 +2013,7 @@ TODO try proof general version of 9.3.1
   Each point in $A$ corresponds to $Att$ outputting a solution $vv$ to $CC$ outside of $W$.
   From the solution and the protocol of $Att$ and $Ora$ we can construct the map $T: CC -> {1, ..., N}$.
   TODO explain how to construct T and what it means.
-  Define the event $A_T$ to be $Att$ wins while unsing the mapping $T$.
+  Define the event $A_T$ to be $Att$ wins while using the mapping $T$.
   We have
   $ A = union.big.sq_T A_T $
   because each win maps to a unique T.
@@ -2151,7 +2151,7 @@ TODO try proof general version of 9.3.1
 
   Proof of 2.:
   Assume that $c$ and $c'$ are such that $c vv = c' vv$.
-  By the defintion of $K$ we the space $ker(c - c')$ contains $K$.
+  By the definition of $K$ we the space $ker(c - c')$ contains $K$.
   Let $ww in K$ arbitrary then $(fs c) ww = c ff ww = c ww = c' ww = (fs c') ww$.
 
   Proof of 3.:
