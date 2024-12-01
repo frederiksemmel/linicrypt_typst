@@ -1152,7 +1152,7 @@ recursively.
   $
     SolAdv[Att, CC] < N / (|#F|).
   $
-]<theorem-unsolvable>
+]<theorem-unsolvable-old>
 
 
 
@@ -1487,7 +1487,7 @@ there are differences in how hard they are to solve.
 
 === Reducing Unsolvability theorem to loops
 
-This is an idea that does not yet go anywhere useful... 
+This is an idea that does not yet go anywhere useful...
 
 My goal is to make the Unsolvability theorem work for multiple oracle models at the same time.
 For that I try to encapsulate the security of a particular oracle model behind some "interface".
@@ -1497,8 +1497,8 @@ I call a loop a set of constraints like this ${ee_1 |-> ee_2, ee_2 |-> ee_3, ee_
 The simplest loop would be ${0 |-> 0}$.
 Loops are completely unsolvable: There is no subspace such that projecting into that subspace gives a solvable set of constraints.
 Loops correspond in a sense to fixed points of the oracle:
-- $mat(x) in sol(ee_1 |-> ee_1) <==> H(x) = x$ 
-- $mat(x, H(x))^top in sol(ee_1 |-> ee_2, ee_2 |-> ee_1) <==> H(H(x)) = x$ 
+- $mat(x) in sol(ee_1 |-> ee_1) <==> H(x) = x$
+- $mat(x, H(x))^top in sol(ee_1 |-> ee_2, ee_2 |-> ee_1) <==> H(H(x)) = x$
 
 My hope was that we can just require the oracle to be such that finding solutions to loops is hard,
 i.e. the oracle has no fixed points,
@@ -1699,8 +1699,8 @@ The game chooses $xx$ at random.
 We set the input of $PP$ to $(ee_1 xx, ee_2 xx)$ get the output $vv = mat(v_1,v_2,v_3,v_4)^top in Vp$.
 This $vv$ is in $sol(CC)$:
 $
-  ee_3 vv = v_3 = H(v_1) = H(ee_1 vv) quad &==> quad  vv in sol(ee_1 |-> ee_3) \
-  ee_4 vv = v_4 = H(v_2 + v_3) = H((ee_2 + ee_3) vv)  quad &==> quad  vv in sol(ee_2 + ee_3 |-> ee_4)
+  ee_3 vv = v_3 = H(v_1) = H(ee_1 vv) quad &==> quad vv in sol(ee_1 |-> ee_3) \
+  ee_4 vv = v_4 = H(v_2 + v_3) = H((ee_2 + ee_3) vv) quad &==> quad vv in sol(ee_2 + ee_3 |-> ee_4)
 $
 Also, $vv - xx = mat(0,0,v_3, v_4)^top$ is in $Fixing^0$,
 so condition 2. is fulfilled.
@@ -1737,20 +1737,19 @@ and derive a method to construct a successful adversary against a $SolGame$ that
 
   If $c$ is solvable fixing $Fixing$ then there is a 1-query adversary $Att$ with
   $
-    Pr[sans("SolGame")({c}, Fixing, 0, Att, lambda)] >= 1 - 1 / (|FF|)
+    Pr[sans("SolGame")({c}, Fixing, 0, Att, lambda)] >= 1 - 1 / (|FF|^d)
   $.
-]
-
-
+]<lemma-single-solution>
 
 
 #proof[
   We describe the program $Att$ and prove that it wins $SolGame$.
   Define $Fixing'$ to be a $d-1$ dimensional subspace containing $Fixing + span(qq_1\, ...\, qq_k)$ but not $aa$.
 
-  TODO consider using this
-  $Fixing' = Vd - aa$.
-  TODO is this well defined? There are many possible d-1 dimensional subspaces of $Vd$ without $aa$.
+  // TODO consider using this
+  // $Fixing' = Vd - aa$.
+  // TODO is this well defined? There are many possible d-1 dimensional subspaces of $Vd$ without $aa$.
+  // I think this is not a clearer notation 
 
   This is possible because $aa$ is assumed to be outside of $Fixing + span(qq_1\, ...\, qq_k)$.
   We choose a basis of $Fixing'$ and we call it
@@ -1795,17 +1794,27 @@ and derive a method to construct a successful adversary against a $SolGame$ that
 
   To check condition 1. we compute:
   $
-    aa vv = aa BB mat(v_1; ...; v_(n-1); a) = a = H(q_1, ..., q_k) = H(
-      qq_1 xx, ..., qq_k xx
-    ) = H(qq_1 vv, ..., qq_k vv)
+    aa vv = aa BB mat(v_1; ...; v_(n-1); a) = a = H(q_1, ..., q_k) = H( qq_1 xx, ..., qq_k xx ) = H(qq_1 vv, ..., qq_k vv)
   $
   The last equation holds because $qq_i$ is in $Fixing'$ by definition.
 
   Condition 3., in this case $vv != 0$,
-  is almost always fulfilled except if the adversary is extremely unlucky.
-  For that to happen, at the very least $a$ needs to be zero, which happens with probability $1/(|FF|)$.
+  is almost always fulfilled.
+  The probability for $vv = 0$ is the probability of $xx in Fixing'^0$ and of $a = 0$.
+  Both together happen with probability $1 / (|FF|^d)$.
 
-  TODO this last argument is hand wavy, needs to be fixed together with the other TODOs connected to this.
+  // The program $Att^H$ can be seen as a wrapper around a Linicrypt program.
+  // #pseudocode-list(
+  //   booktabs: true,
+  //   booktabs-stroke: 1pt + black,
+  //   line-numbering: "1",
+  //   title: [$PP(v_1, ..., v_(d-1))$],
+  // )[
+  // + $q_i := qq_i BB mat(v_1, ..., v_(d-1), 0)^top$ where $i=1, ..., k$
+  // + $a := H(q_1, ..., q_k)$ \
+  // + *return* $BB mat(v_1, ..., v_(d-1), a)^top$
+  // ]
+  // This is a Linicrypt program with the algebraic representation $({qq_1 BB, ..., qq_k BB |-> aa BB}, BB)$
 ]
 
 TODO include $span(c_i)$ in the definition of the oracle constraint.
@@ -1816,25 +1825,23 @@ $span(c)$ is the span of the dual vectors used to describe $c$.
 So if $c = qq_1\, ...\, qq_k |-> aa$ we define $span(c) := span(qq_1\, ... \, qq_k\, aa)$.
 If $c = xx <-->^(#move(dy: 1.7pt, kk)) yy$ then $span(c) := span(xx\, kk\, yy)$.
 
-#corollary[
+#theorem("Solvability")[
   Let $#CC = {c_1, ..., c_n}$ be a set of constraints, ordered by their index.
   Let $Fixing_0$ be a given subspace of $Vd$,
   and we define $Fixing_i = Fixing_(i-1) + span(c_i)$.
   We say $CC$ is solvable fixing $Fixing_0$ if $c_i$ is solvable fixing $Fixing_(i-1)$ for every $i=1,...,n$.
 
   If $CC$ is solvable fixing $Fixing_0$ there exists a n-query adversary $Att$ with
-  $ Pr[sans("SolGame")(CC, Fixing_0, 0, Att, lambda)] >= 1 - 1/ (|FF| ^ d). $
-]
-
-TODO analyze condition 3. more precisely to get $|FF| ^d$.
-
+  $ Pr[sans("SolGame")(CC, Fixing_0, 0, Att, lambda)] >= 1 - 1 / (|FF|^d). $
+  In fact, the program $Att$ is a Linicrypt program.
+]<theorem-solvable-implies-attack>
 
 #proof[
   The $SolGame$ was defined in such a way that we can compose the attacks for each constraint
   to get an attack for all the constraint.
 
   Because $c_i$ is solvable fixing $Fixing_(i-1)$,
-  we get an adversary $Att_i$ for each $i=1,...,n$
+  we get the adversary $Att_i$ for each $i=1,...,n$ from #ref(<lemma-single-solution>)
   with $SolAdv({c_i}, Fixing_(i-1), 0, Att_i) >= 1/(|FF|)$.
   We construct the adversary $Att$ by setting
   $Att = Att_n compose ... compose Att_1$.
@@ -1850,33 +1857,41 @@ TODO analyze condition 3. more precisely to get $|FF| ^d$.
   Because $(Fixing_0)^0$ is a subspace, the sum $sum_(i=1)^n vv_i - vv_(i-1) = vv - xx$ is contained in $(Fixing_0)^0$.
   This means that condition 2. is fulfilled.
 
-  Condition 3. is almost always fulfilled except if all the calls to the oracle return 0 by chance.
+  Condition 3. is almost always fulfilled.
+  If to the contrary $vv = 0$ we would have 
+  $xx in (Fixing_0)^0$ and each of the $n$ oracle calls being 0.
+  The probability of both is bounded from above by $1/(|FF|^(n + k))$ if $k$ is the dimension of $Fixing_0$.
+  The space $Fixing_0$ could have been expanded to be of dimension $d - n$ without affecting the previous argument,
+  we get the bound $1/(|FF|^d)$.
 
-  TODO this is the same hand wavy argument as before, need to fix it.
+  TODO try to do the previous statement formally without taking too much space.
+  It's not neccessary to get the power $d$.
+
+  Note that $Att$ is a Linicryp program because it is a concatenation of Linicrypt programs.
+  Indeed, we could write the attack as a Linicryp program with algebraic represtation $(CC BB, BB)$ for some $BB$.
 ]
 
-TODO Connect this corollary to collision structure.
+What we will later prove is that the reverse of the corollary is also true.
+It implies that any good adversary for the $SolGame$ is in its essence a Linicrypt program.
+Because we will relate a specific instance of $SolGame$ to collision resistance,
+if a Linicrypt program is not CR, then there is a Linicryp program computing collisions.
+This is an unexpected property of Linicrypt.
 
-#remark[
-  - This proof works for sets of constraints which are mixed from different oracle models.
-  - The program $Att$ can be expressed as a Linicrypt program. TODO expand a bit
-  - What we will later prove is that the reverse of the corollary is also true.
-  This means that any adversary for the $SolGame$ is actually nothing else than a Linicrypt program.
-]
-
-Remark for Zahra and Bruce: I find all of this until here quite complicated for what it is supposed to say.
-I am trying to formalize the idea that if $CC$ is solvable,
-then we can find solutions via a step by step solving of the constraints.
-And this step by step solving is basically a Linicrypt program.
-Well... maybe further iteration makes it simpler.
+// Remark for Zahra and Bruce: I find all of this until here quite complicated for what it is supposed to say.
+// I am trying to formalize the idea that if $CC$ is solvable,
+// then we can find solutions via a step by step solving of the constraints.
+// And this step by step solving is basically a Linicrypt program.
+// Well... maybe further iteration makes it simpler.
 
 == Mapping constraints between spaces
-The previous constructs allow us to make statements about programs that use multiple oracle models simultaneously.
-But the main benefit of this description is that mappings between constraints are possible and offer further proof methods.
-This means that we can relate the executions of different Linicrypt programs,
-if one can establish a linear map between their algebraic representations.
+The main benefit of or perspective on Linicrypt
+is that it is natural to define mappings between constraints
+This offers further proof methods.
+Given a set of constraints on $Vp$ and a linear map from some $W -> Vp$,
+we can pull back the constraints to $W$ and relate solutions on $W$ to solutions on $Vp$ via the same map.
+In other words linear maps establish a mapping between executions of different Linicrypt programs and a mapping of the program itself.
 
-We will use the dual map of a linear map a lot.
+We will use the dual map (also called pullack) of a linear map.
 Assume we have a linear map $f: W -> Vp$.
 This induces a natural map on the dual spaces going in the other direction
 called $f^*: Vd -> W^*$.
@@ -1893,7 +1908,7 @@ this idea becomes very useful because it models the collapse of distinct calls t
 
 By abusing the notation a bit we will write $f^*(CC)$ to mean the set of constraints when we apply $f^*$ to all the components of each constraint.
 Note, that this set can be smaller than the original set.
-Sometimes we will also just write $fs CC$.
+Usually we will just write $fs CC$.
 
 #lemma("Linear maps of constraints")[
   Let #C be a set of constraints of dimension $d$ and
@@ -1902,15 +1917,15 @@ Sometimes we will also just write $fs CC$.
   $
     #ww in sol(f^*CC) <==> f (ww) in sol(CC)
   $
-]<mapping-constraints>
+]<lemma-mapping-constraints>
 #proof[
   We first need to prove the case of a single constraints for any oracle model.
   Let $c = qq_1, ..., qq_k |-> aa$ be a random oracle constraint.
   $
     vv in sol(fs c)
     &<==> (fs aa) vv = H((fs qq_1) vv, ..., (fs qq_k) vv) \
-    &<==> aa ff vv = H(qq_1 ff vv, ..., qq_k ff vv) \
-    &<==> ff vv in sol(c)
+    &<==> aa ff (vv) = H(qq_1 ff (vv), ..., qq_k ff (vv)) \
+    &<==> ff (vv) in sol(c)
   $
   An similar argument can be made for ideal cipher constraints.
 
@@ -1919,17 +1934,17 @@ Sometimes we will also just write $fs CC$.
     vv in sol(fs CC)
     &<==> vv in sol(c') text(" for all ") c' in fs CC \
     &<==> vv in sol(fs c) text(" for all ") c in CC \
-    &<==> ff vv in sol(c) text(" for all ") c in CC \
-    &<==> ff vv in sol(CC)
+    &<==> ff (vv) in sol(c) text(" for all ") c in CC \
+    &<==> ff (vv) in sol(CC)
   $
 ]
 
-This Lemma is more consequential than it looks.
-It gives the key to understanding the structure of a set of constraints by analyzing the structure of a mapped version of the constraints.
+This Lemma gives the key to understanding the structure of a set of constraints
+in term of the structure of a mapped version of the constraints.
 By choosing the right maps, we can simplify the constraints.
 This happens when we map a set of constraints that are not solvable to a solvable set.
-A simple example is $CC = {mat(1, 0, 0) |-> mat(0,0,1), mat(0, 1, 0) |-> mat(0,0,1)}$
-This is not solvable.
+A simple example is $CC = {mat(1, 0, 0) |-> mat(0,0,1), mat(0, 1, 0) |-> mat(0,0,1)}$.
+This $CC$ is not solvable.
 But applying the linear map with the matrix
 $
   M_f = mat(1,0; 1,0; 0,1)
@@ -1940,7 +1955,7 @@ Note that $sol(CC)$ also contains other solutions, i.e. corresponding to cases w
 We want to model the idea that a Linicrypt program, when given random inputs,
 the state vector of the program will be randomly distributed in the state space.
 
-TODO fix this
+TODO this definition still needs work. "query parts" needs to be defined in the beginning together with notation $c vv$, $span(c)$ and $span(c - c')^0$.
 #definition("Proper random oracle constraints")[
   Let $c$ and $c'$ be two random oracle constraints.
   The pair ${c, c'}$ is called proper if the query parts are different.
@@ -1952,19 +1967,19 @@ TODO fix this
   Assume $CC$ is a proper set of constraints in $Vp$ and $W subset Vp$ is a subspace.
   Then the probability that $sol(CC)$ is contained in $W$ is smaller or equal to $1 / (|FF|)$.
 ]
-
-I will use the notation $iota_W$ for the linear map of from a subspace $W$ to its containing space.
+TODO proof of this. It is needed to get an attack against $SolGame$ from the solvability outside condition.
 
 #corollary[
   Let $#CC = {c_1, ..., c_n}$ be a set of constraints, ordered by their index.
   Let $U$ be a subspace of $Vp$.
-  We say $CC$ is solvable outside of $U$ if
-  there exists a subspace $W$ of $Vp$ with $W subset.eq.not U$ and
-  $incWs(CC)$ is solvable (fixing 0).
+  We say $CC$ is solvable outside of $W$ if
+  there exists a subspace $U$ of $Vp$ with $U subset.eq.not W$ and
+  $fs CC$ is solvable (fixing 0) and proper,
+  where $f: U arrow.hook Vp$ is the inclusion.
 
   If #CC is solvable outside of $W$ then there is an adversary #Att with
   $
-    SolAdv[CC, 0, W, Att] >= 1 - 1 / (|FF|).
+    SolAdv(CC, 0, W, Att) >= 1 - 1 / (|FF|).
   $
 
   TODO see if having $W$ outside here is nicer.
@@ -1975,15 +1990,14 @@ I will use the notation $iota_W$ for the linear map of from a subspace $W$ to it
   the statement of the corollary.
   We are given by the game the value $xx in Vp$,
   which doesn't really matter because we are considering the case $Fixing = 0$.
-  Choose a random $xx' in W$.
-  Assume $Att_W (xx')$ wins $SolGame[incWs CC, 0, 0]$ by outputting $ww in sol(incWs CC) subset.eq W$.
-  Because $incWs CC$ is proper,
-  the probability that $ww$ is in $U$ is $<= 1 / (|FF|)$.
-  TODO formalize the last sentence.
-  Our adversary $Att$ just outputs $incW (ww) = ww$.
-  By #ref(<mapping-constraints>) we have $ww = incW ww in sol(CC)$.
-  The second condition is void anyways $ww - xx in ker(0) = Vp$.
-  The third condition $ww in.not U$ is almost always fulfilled.
+  Choose a random $xx' in U$.
+  Assume $Att_W (xx')$ wins $SolGame(fs CC, 0, 0)$
+  by outputting $uu in sol(fs CC) subset.eq U$.
+  Because $fs CC$ is proper,
+  the probability that $uu$ is in $W$ is $<= 1 / (|FF|)$.
+  Our adversary $Att$ just outputs $f (uu) = uu$.
+  By #ref(<lemma-mapping-constraints>) we have $uu = f(uu) in sol(CC)$.
+  The second condition is void anyways $uu - xx in 0^0 = Vp$.
 ]
 
 Remark Zahra and Bruce: I need to figure out how to make this work while fixing $Fixing$.
@@ -1993,10 +2007,7 @@ TODO try proof general version of 9.3.1
 
 #theorem("Unsolvability New")[
   Let #CC be a set of constraints which is unsolvable outside of a subspace $W$ of $Vp$.
-  Let $Att$ be an arbitrary adversary, then
-  $
-    SolAdv[CC, 0, W, Att] <= N^n sup {SolAdv[c, Fixing, W, Att'] | c "is unsolvable fixing" Fixing }.
-  $
+  Let $Att$ be an arbitrary adversary.
   In the case that all constraints are $H$-constraints, we have
   $
     SolAdv[CC, 0, W, Att] <= N^n / (|FF|).
@@ -2005,12 +2016,13 @@ TODO try proof general version of 9.3.1
   $
     SolAdv[CC, 0, W, Att] <= N^n / (|FF| - N).
   $
-]
+]<theorem-unsolvable>
 
-#sketch[
+#proof[
   We define a series of events and show implications between them.
   Let $A$ denote the event that $Att$ wins $SolGame(CC, 0, W)$.
   Each point in $A$ corresponds to $Att$ outputting a solution $vv$ to $CC$ outside of $W$.
+<<<<<<< HEAD
   From the solution and the protocol of $Att$ and $Ora$ we can construct the map $T: CC -> {1, ..., N}$.
   TODO explain how to construct T and what it means.
   Define the event $A_T$ to be $Att$ wins while using the mapping $T$.
@@ -2018,75 +2030,162 @@ TODO try proof general version of 9.3.1
   $ A = union.big.sq_T A_T $
   because each win maps to a unique T.
   Therefore $Pr[A] = sum_T Pr[A_T]$.
+||||||| parent of defb0b5 (new version of unsolvability ok and general revision)
+  From the solution and the protocol of $Att$ and $Ora$ we can construct the map $T: CC -> {1, ..., N}$.
+  TODO explain how to construct T and what it means.
+  Define the event $A_T$ to be $Att$ wins while unsing the mapping $T$.
+  We have
+  $ A = union.big.sq_T A_T $
+  because each win maps to a unique T.
+  Therefore $Pr[A] = sum_T Pr[A_T]$.
+=======
+  We also observe the protocol of $Att$ with $Ora$ by recording the function $Q: {1, ..., N} -> "Query"_Ora$.
+  TODO define $"Query"_H$ and $"Query"_E$ in the beginning.
+  By requiring that the adversary does not repeat queries to $Ora$ we can assume that $Q$ is injective.
+  From the solution and the protocol of $Att$ and $Ora$ we can construct the timing function $T: CC -> {1, ..., N}$ by $T(c) = Q^(-1)(c vv)$.
+  At the $T(c)$'th query to $Ora$ the program $Att$ "decided" what the value of $c vv$ should be.
+  Let $A_T$ be the event in which $Att$ wins while unsing the mapping $T$.
+  These events partition $A$, therefore
+  $
+    Pr[A] = sum_T Pr[A_T].
+  $
+>>>>>>> defb0b5 (new version of unsolvability ok and general revision)
 
-  We will consider the event $A_T$ for a given $T: CC -> {1, ..., N}$.
-  This $T$ might not be injective.
-  If it was, we could use $Att$ to build an attacker against a specific unsolvable constraint.
+  We will consider the event $A_T$ for an arbitrary $T: CC -> {1, ..., N}$.
+  This $T$ might not be injective, because the constraints do not have nonces.
   Consider the following subspace of $Vp$:
   $
     U = sect.big_(c, c' in CC \ T(c) = T(c')) span(c - c')^0
   $
-  If $T$ was injective we would have $U = V$.
-  Consider the embedding $f: U arrow.hook Vp$.
+  If $T$ was injective we would have $U = Vp$.
+  Let $f$ denote the embedding $f: U arrow.hook Vp$.
   We will use it to show that $Att$ implies an attack on $f^* CC$.
 
   Claims:
   + Any output $vv$ of $Att$ using $T$ that wins $SolGame(CC, 0, W)$ is in $U$
   + $U$ is not contained in $W$
-  + $T(c) = T(c')$ is equivalent to $fs c = fs c'$ 
+  + $T(c) = T(c')$ is equivalent to $fs c = fs c'$
 
   Proof of 1.: We are considering the event $A_T$.
-  Therefore $Att$ found a $vv$ in $sol(CC)$ outside of $W$.
-  But we can show that $vv$ is in $U$, hence claim 1. follows.
+  Therefore $Att$ found a $vv$ in $sol(CC)$ using the mapping $T$.
   Let $c, c'$ be such that $T(c) = T(c')$.
   Then $c vv = c' vv$ and equivalently $vv in span(c - c')^0$, so $vv$ is in $U$.
 
-  Proof of 2.: Assume $T(c) = T(c')$. Let $uu$ be arbitrary in $U$.
+  Proof of 2.: In $A_T$ we know that $vv in.not W$.
+  Because $vv in U$ we have shown that $U subset.eq.not W$.
+
+  Proof of 3.: Assume $T(c) = T(c')$. Let $uu$ be arbitrary in $U$.
   Then we have $fs c uu = c f uu = c uu = c' uu = c' f uu = fs c' uu$.
   Therefore $fs c = fs c'$.
-
   Now assume $fs c = fs c'$.
   This means for all $uu in U$ we have $c uu = c' uu$.
   In particular also for the $vv$ that $Att$ has outputted, so $T(c) = T(c')$.
 
   Consider the game $SolGame(fs CC, 0, W sect U)$.
-
-  We build an adversary called $Att'$ which takes a $xx$ in $U$ as input.
-
+  We build an adversary for this game called $Att'$.
   #pseudocode-list(booktabs: true, title: $Att'(xx)$)[
     + $vv = Att(f(xx))$
-    + if $vv in U$ *return* $f^(-1)(vv)$ else *return* $bot$
+    + if $vv in U$ *return* $finv(vv)$ else *return* $bot$
   ]
 
-  We will show that being in the event $A_T$ implies that $Att'$ wins at $SolGame(fs CC, 0, W sect U)$.
-  Assume we are in $A_T$, so $Att$ has returned a $vv in sol(CC)$ and is using the timing function $T$.
+  We will show that being in the event $A_T$ implies that $Att'$ wins at $SolGame(fs CC, 0, W sect U)$ with the timing function $T'(f^*c) = T(c)$.
+  Let us call the latter event $A'_T'$
+
+  Assume we are in the event $A_T$,
+  i.e. $Att$ has returned a $vv in sol(CC)$ and is using the timing function $T$.
   This implies $vv$ is in $U$ and $Att'$ returns $f^(-1)(vv)$.
-  Let $fs c$ be a constraint in $fs CC$.
-  Then $finv(vv) "solves" fs c <=> vv "solves" c$, hence $finv(vv) in sol(fs CC)$.
+  By #ref(<lemma-mapping-constraints>) we know that $finv(vv) in sol(fs CC)$.
   It follows from $vv in.not W$ that $finv(vv) in.not W sect U$.
-  So the event $A_T$ implies that $SolGame(fs CC, 0, W sect U, Att') = 1$.
-  We get 
+  Now consider the timing function for $Att'$.
+  Following it's definition we get $T'(fs c) = Q^(-1)(fs c finv(vv)) = Q^(-1)(c vv)= T(c)$.
+  This lets us assert that
   $
-    Pr[A_T] <= SolAdv(fs CC, 0, W sect U, Att')
+    Pr[A_T] <= Pr[A'_T']
   $
 
-  Consider the timing function for $Att'$ called $T': fs CC -> {1, ..., N}$.
-  In the event $A_T$ we can compute $T'(fs c) = Q^(-1)(fs c finv(vv)) = T(c)$.
-  From claim 2. it follows that this $T'$ is actually injective.
-  This induces an ordering on $fs CC$ which we will write as $fs CC = {c'_1, ..., c'_n'}$
+  Note that claim 2. implies that $T'$ is injective.
+  This lets us order $fs CC$ as ${c'_1, ..., c'_n'}$ such that $T(c'_i) < T(c'_j) <=> i < j$.
+  Therefore at the $j$'th query all the values $c'_i vv$ for $i=1, ..., j-1$ have been determined
+  while the value of $c'_j vv$ is determined by a fresh query to the oracle.
 
   Now we can finally apply the assumption that $CC$ is unsolvable outside of $W$.
   By definition, this implies that $fs CC$ is not solvable.
-  Therefore there has to be a constraint $c'_(i^*)$ in $fs CC$ such that 
-  $fs c$ is not solvable fixing $span(c'_1\, ...\, c'_(i^* - 1))$.
+  Therefore there has to be a constraint $c'_j$ in $fs CC$ such that
+  $fs c$ is not solvable fixing $span(c'_1\, ...\, c'_(j-1))$.
 
-  Because $T'$ is injective,
-  we know that all the values of $c'_i (f^(-1)(vv))$ have already been determined for $i in {1, ..., i^* - 1}$
-  at the time when $Att'$ makes its $T(c'_(i^*))$'th query.
+  We make a case distinction on the oracle model.
+  If $c'_j$ is a $H$-constraint $qq_1, ..., qq_k |-> aa$,
+  then this means that $aa vv$ is in $span(c'_1\, ...\, c'_(j-1)) + span(qq_1\, ...\, qq_k)$
+  while at the same time $H(qq_1 vv, ..., qq_k vv)$ is a fresh query to $H$.
+  Therefore $ Pr[A'_T'] <= Pr[H(qq_1 vv, ..., qq_k vv) = aa vv] <= 1 / (|FF|) $
 
+  If $c'_j$ is an $E$-constraint $(xx, kk, yy)$,
+  we know that both $yy vv in span(c'_1\, ...\, c'_(j-1)) + span(xx\, kk)$
+  and $xx vv in span(c'_1\, ...\, c'_(j-1)) + span(yy\, kk)$.
+  The $T'(c'_j)$'th oracle call is either $E(kk vv, xx vv)$ or $D(kk vv, yy vv)$.
+  Both are sampled randomly from at least $1 / (|FF| - N)$ values, so
+  $
+    Pr[A'_T'] <= 1 / (|FF| - N).
+  $
+
+  This means we have found an upper bound for $Pr[A_T]$ for any given $T$.
+  As there are $N^n$ possible functions for $T$, we can write
+  $
+    Pr[A] = sum_T Pr[A_T] <= N^n Pr[A_T] <= N^n Pr[A'_T'] <= N^n
+    cases(
+        1/(|FF|) "if" CC "are" H"-constraints",
+        1/(|FF| - N) "if" CC "are" E"-constraints",
+      )
+  $
 ]
 
-#theorem("Unsolvability")[
+TODOS:
+- add $"Query"_Ora$ to the defintions
+- add the meaning of $c vv$ to the definitions, i.e. see $c$ as a function $c: Vp -> "Query"_Ora$
+
+This theorem allows us to characterize collision resistance of Linicrypt programs.
+Let $PP$ be a Linicrypt program with algebraic representation $(CC, OO)$.
+
+We want to express the problem of finding collisions in term of a $SolGame$.
+Consider the space $Vp times Vp = FF^(2d)$ and the projection maps
+$Proj_i: Vp times Vp -> Vp$ by $Proj_i (vv_1, vv_2) = vv_i$ for $i$ in ${1, 2}$.
+Then we define $Cjoin = Proj_1^* CC union Proj_2^* CC$.
+In matrix notation, this corresponds to extending all the row vectors in $CC$ by $n$ zeros once on the left
+and once on the right.
+$Cjoin$ in itself is not interesting,
+as there is a one to one correspondence of solutions to $CC$ and $Cjoin$.
+Consider the space $U := ker(P_1^* OO - P_2^* OO) subset.eq Vp times Vp$.
+This is an interesting space because $(vv_1, vv_2)$ in $U$ is equivalent to $OO vv_1 = OO vv_2$.
+Let $f: U arrow.hook Vp$ be the embedding map.
+Let us also define $S := ker(Proj_1 = Proj_2)$.
+Then $(vv_1, vv_2) in S$ is equivalent to $vv_1 = vv_2$.
+
+#corollary("Collisions")[
+  $fs Cjoin$ is solvable outside of $S sect U$
+  is equivalent to there being an attack $Att$ against collision resistance of $PP$ with advantage $>= N^(2n) / (|FF|)$.
+]<corollary-collisions>
+
+#proof[
+  We will show that finding a collison for $PP$ is equivalent to finding solutions to $SolGame(fs Cjoin, 0, S sect U)$.
+  Let $xx_1$ and $xx_2$ be two inputs to $PP$ such that $PP(xx_1) = PP(xx_2)$.
+  Let $vv_1$ and $vv_2$ in $Vp$ be the corresponding execution vectors.
+  (TODO maybe need to go more into the details of this one to one correspondence. It is a corollary of something in the beginning I think.)
+  From $vv_1, vv_2 in sol(CC)$ it follows that $(vv_1, vv_2) in sol(Cjoin)$.
+  We also have $vv_1 != vv_2$, so $(vv_1, vv_2) in.not S$ and $OO vv_1 = OO vv_2$ so $(vv_1, vv_2) in U$.
+  Therefore $finv((vv_1, vv_2))$ is well-defined and a solution to $SolGame(fs Cjoin, 0, S sect U)$ by #ref(<lemma-mapping-constraints>).
+
+  For the inverse direction, this argument can be repeated backwards to obtain the collisions to $PP$ from a solution to $fs Cjoin$ outside $S$.
+
+  By this correspondence we can construct an adversary to CR of $PP$
+  from an adversary to $SolGame(fs Cjoin, 0, S sect U)$ and vice versa.
+  And crucially both adversaries have the same success probability.
+  The number of constraints in $fs Cjoin$ is less than or equal to $n$ which gives us the bound of the Corollary.
+]
+
+
+#pagebreak()
+
+#theorem("Unsolvability Old")[
   Let #CC be a set of constraints and $W$ a subspace of $Vp$.
   Assume that there is an adversary $Att$ with
   $

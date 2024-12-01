@@ -75,10 +75,6 @@
 #let ff = $f$
 #let fs = $f^*$
 #let finv = $f^(-1)$
-#let incU = $iota_U$
-#let incUs = $iota_U^*$
-#let incW = $iota_W$
-#let incWs = $iota_W^*$
 
 // constraints shortcuts
 #let cs = $italic("cs")$
