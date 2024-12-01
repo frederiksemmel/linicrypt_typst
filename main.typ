@@ -2022,23 +2022,6 @@ TODO try proof general version of 9.3.1
   We define a series of events and show implications between them.
   Let $A$ denote the event that $Att$ wins $SolGame(CC, 0, W)$.
   Each point in $A$ corresponds to $Att$ outputting a solution $vv$ to $CC$ outside of $W$.
-<<<<<<< HEAD
-  From the solution and the protocol of $Att$ and $Ora$ we can construct the map $T: CC -> {1, ..., N}$.
-  TODO explain how to construct T and what it means.
-  Define the event $A_T$ to be $Att$ wins while using the mapping $T$.
-  We have
-  $ A = union.big.sq_T A_T $
-  because each win maps to a unique T.
-  Therefore $Pr[A] = sum_T Pr[A_T]$.
-||||||| parent of defb0b5 (new version of Unsolvability OK and general revision)
-  From the solution and the protocol of $Att$ and $Ora$ we can construct the map $T: CC -> {1, ..., N}$.
-  TODO explain how to construct T and what it means.
-  Define the event $A_T$ to be $Att$ wins while using the mapping $T$.
-  We have
-  $ A = union.big.sq_T A_T $
-  because each win maps to a unique T.
-  Therefore $Pr[A] = sum_T Pr[A_T]$.
-=======
   We also observe the protocol of $Att$ with $Ora$ by recording the function $Q: {1, ..., N} -> "Query"_Ora$.
   TODO define $"Query"_H$ and $"Query"_E$ in the beginning.
   By requiring that the adversary does not repeat queries to $Ora$ we can assume that $Q$ is injective.
@@ -2049,7 +2032,6 @@ TODO try proof general version of 9.3.1
   $
     Pr[A] = sum_T Pr[A_T].
   $
->>>>>>> defb0b5 (new version of Unsolvability OK and general revision)
 
   We will consider the event $A_T$ for an arbitrary $T: CC -> {1, ..., N}$.
   This $T$ might not be injective, because the constraints do not have nonces.
