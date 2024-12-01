@@ -1865,16 +1865,16 @@ If $c = xx <-->^(#move(dy: 1.7pt, kk)) yy$ then $span(c) := span(xx\, kk\, yy)$.
   we get the bound $1/(|FF|^d)$.
 
   TODO try to do the previous statement formally without taking too much space.
-  It's not neccessary to get the power $d$.
+  It's not necessary to get the power $d$.
 
-  Note that $Att$ is a Linicryp program because it is a concatenation of Linicrypt programs.
-  Indeed, we could write the attack as a Linicryp program with algebraic represtation $(CC BB, BB)$ for some $BB$.
+  Note that $Att$ is a Linicrypt program because it is a concatenation of Linicrypt programs.
+  Indeed, we could write the attack as a Linicrypt program with algebraic representation $(CC BB, BB)$ for some $BB$.
 ]
 
 What we will later prove is that the reverse of the corollary is also true.
 It implies that any good adversary for the $SolGame$ is in its essence a Linicrypt program.
 Because we will relate a specific instance of $SolGame$ to collision resistance,
-if a Linicrypt program is not CR, then there is a Linicryp program computing collisions.
+if a Linicrypt program is not CR, then there is a Linicrypt program computing collisions.
 This is an unexpected property of Linicrypt.
 
 // Remark for Zahra and Bruce: I find all of this until here quite complicated for what it is supposed to say.
@@ -1891,7 +1891,7 @@ Given a set of constraints on $Vp$ and a linear map from some $W -> Vp$,
 we can pull back the constraints to $W$ and relate solutions on $W$ to solutions on $Vp$ via the same map.
 In other words linear maps establish a mapping between executions of different Linicrypt programs and a mapping of the program itself.
 
-We will use the dual map (also called pullack) of a linear map.
+We will use the dual map (also called pullback) of a linear map.
 Assume we have a linear map $f: W -> Vp$.
 This induces a natural map on the dual spaces going in the other direction
 called $f^*: Vd -> W^*$.
@@ -2030,10 +2030,10 @@ TODO try proof general version of 9.3.1
   $ A = union.big.sq_T A_T $
   because each win maps to a unique T.
   Therefore $Pr[A] = sum_T Pr[A_T]$.
-||||||| parent of defb0b5 (new version of unsolvability ok and general revision)
+||||||| parent of defb0b5 (new version of Unsolvability OK and general revision)
   From the solution and the protocol of $Att$ and $Ora$ we can construct the map $T: CC -> {1, ..., N}$.
   TODO explain how to construct T and what it means.
-  Define the event $A_T$ to be $Att$ wins while unsing the mapping $T$.
+  Define the event $A_T$ to be $Att$ wins while using the mapping $T$.
   We have
   $ A = union.big.sq_T A_T $
   because each win maps to a unique T.
@@ -2044,12 +2044,12 @@ TODO try proof general version of 9.3.1
   By requiring that the adversary does not repeat queries to $Ora$ we can assume that $Q$ is injective.
   From the solution and the protocol of $Att$ and $Ora$ we can construct the timing function $T: CC -> {1, ..., N}$ by $T(c) = Q^(-1)(c vv)$.
   At the $T(c)$'th query to $Ora$ the program $Att$ "decided" what the value of $c vv$ should be.
-  Let $A_T$ be the event in which $Att$ wins while unsing the mapping $T$.
+  Let $A_T$ be the event in which $Att$ wins while using the mapping $T$.
   These events partition $A$, therefore
   $
     Pr[A] = sum_T Pr[A_T].
   $
->>>>>>> defb0b5 (new version of unsolvability ok and general revision)
+>>>>>>> defb0b5 (new version of Unsolvability OK and general revision)
 
   We will consider the event $A_T$ for an arbitrary $T: CC -> {1, ..., N}$.
   This $T$ might not be injective, because the constraints do not have nonces.
@@ -2140,7 +2140,7 @@ TODO try proof general version of 9.3.1
 ]
 
 TODOS:
-- add $"Query"_Ora$ to the defintions
+- add $"Query"_Ora$ to the definitions
 - add the meaning of $c vv$ to the definitions, i.e. see $c$ as a function $c: Vp -> "Query"_Ora$
 
 This theorem allows us to characterize collision resistance of Linicrypt programs.
@@ -2166,7 +2166,7 @@ Then $(vv_1, vv_2) in S$ is equivalent to $vv_1 = vv_2$.
 ]<corollary-collisions>
 
 #proof[
-  We will show that finding a collison for $PP$ is equivalent to finding solutions to $SolGame(fs Cjoin, 0, S sect U)$.
+  We will show that finding a Collison for $PP$ is equivalent to finding solutions to $SolGame(fs Cjoin, 0, S sect U)$.
   Let $xx_1$ and $xx_2$ be two inputs to $PP$ such that $PP(xx_1) = PP(xx_2)$.
   Let $vv_1$ and $vv_2$ in $Vp$ be the corresponding execution vectors.
   (TODO maybe need to go more into the details of this one to one correspondence. It is a corollary of something in the beginning I think.)
