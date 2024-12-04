@@ -1543,6 +1543,10 @@ Detecting a loop or anything in similar style seems to be easy to check.
 - Formal conferences is TCC and Eurocrypt
   - TCC in deadline in May probably
   - Crypto is usually more real application focused, would need to find a really good application for that
+  
+== Meeting 12.04.2024
+- Updates: Reworked proofs of Unsolvability and of its CR corollary.
+- What do you think of the strategy to define events and implications? Is that a good proof style here?
 
 = Next steps
 
@@ -2035,6 +2039,7 @@ TODO try proof general version of 9.3.1
 
   We will consider the event $A_T$ for an arbitrary $T: CC -> {1, ..., N}$.
   This $T$ might not be injective, because the constraints do not have nonces.
+  TODO make clear that in the following we try to "make" T injective.
   Consider the following subspace of $Vp$:
   $
     U = sect.big_(c, c' in CC \ T(c) = T(c')) span(c - c')^0
@@ -2148,7 +2153,7 @@ Then $(vv_1, vv_2) in S$ is equivalent to $vv_1 = vv_2$.
 ]<corollary-collisions>
 
 #proof[
-  We will show that finding a Collison for $PP$ is equivalent to finding solutions to $SolGame(fs Cjoin, 0, S sect U)$.
+  We will show that finding a collison for $PP$ is equivalent to finding solutions to $SolGame(fs Cjoin, 0, S sect U)$.
   Let $xx_1$ and $xx_2$ be two inputs to $PP$ such that $PP(xx_1) = PP(xx_2)$.
   Let $vv_1$ and $vv_2$ in $Vp$ be the corresponding execution vectors.
   (TODO maybe need to go more into the details of this one to one correspondence. It is a corollary of something in the beginning I think.)
