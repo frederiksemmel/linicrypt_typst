@@ -1,3 +1,4 @@
+
 // #import "@preview/commute:0.2.0": node, arr, commutative-diagram
 #import "@preview/fletcher:0.5.2" as fletcher: diagram, node, edge
 #import "@preview/algo:0.3.4": algo, i, d, comment, code
@@ -239,7 +240,10 @@ the plain collision structure characterization fails in the setting without nonc
     algo(
       // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
       header: $underline(#P (x,y))$,
-      line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+      line-numbers: false,
+      inset: 0.7em,
+      fill: none,
+      block-align: left,
     )[
       $a_1 &:= H(x)$ \
       $a_2 &:= H(y)$ \
@@ -355,7 +359,10 @@ I believe all three approaches are equivalent in the end.
     algo(
       // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
       header: $underline(H^2_f (m_1,m_2))$,
-      line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+      line-numbers: false,
+      inset: 0.7em,
+      fill: none,
+      block-align: left,
     )[
       $h_0 := 0$ \
       $y_1 := E(h_0 + m_1, h_0 + m_1)$ \
@@ -474,7 +481,10 @@ $f(h,m) = E(m,m) + h$.
     algo(
       // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
       header: $underline(H^2_f (m_1,m_2))$,
-      line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+      line-numbers: false,
+      inset: 0.7em,
+      fill: none,
+      block-align: left,
     )[
       $h_0 := 0$ \
       $y_1 := E(m_1, m_1)$ \
@@ -596,7 +606,10 @@ We will pass in the IV called $h_0$ as the first argument to the program.
     algo(
       // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
       header: $underline(H^2_f (h_0;m_1,m_2))$,
-      line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+      line-numbers: false,
+      inset: 0.7em,
+      fill: none,
+      block-align: left,
     )[
       $h_1 := f(h_0, m_1)$ \
       $h_2 := f(h_1, m_2)$ \
@@ -605,18 +618,19 @@ We will pass in the IV called $h_0$ as the first argument to the program.
     algo(
       // title: [$#P _sans("collapse")$], parameters: ($x$, $y$),
       header: $underline(H^2_f (h_0;m_1,m_2))$,
-      line-numbers: false, inset: 0.7em, fill: none, block-align: left,
+      line-numbers: false,
+      inset: 0.7em,
+      fill: none,
+      block-align: left,
     )[
       $y_1 := E(c h_0 + d m_1, e h_0 + f m_1)$ \
       $h_1 := y_1 + a h_0 + b m_1$ \
       $y_2
-      &:= E(c h_1 + d m_2, e h_1 + f m_2) \
-      &=  E(c y_1 + c a h_0 + c b m_1 + d m_2, e y_1 + e a h_0 + e b m_1 + f m_2)
-      $ \
+        &:= E(c h_1 + d m_2, e h_1 + f m_2) \
+        &= E(c y_1 + c a h_0 + c b m_1 + d m_2, e y_1 + e a h_0 + e b m_1 + f m_2)$ \
       $h_2
-      &:= y_2 + a h_1 + b m_2 \
-      &:= y_2 + a y_1 + a^2 h_0 + a b m_1 + b m_2
-      $ \
+        &:= y_2 + a h_1 + b m_2 \
+        &:= y_2 + a y_1 + a^2 h_0 + a b m_1 + b m_2$ \
       return $h_2$
     ],
   )
@@ -628,7 +642,8 @@ If we were to add more calls to the compression functions the expressions get mo
 
 This is the algebraic representation of $H^2_f$ in this basis:
 #align(center)[
-  #table(columns: 3, gutter: 2em,stroke:0pt,align:horizon,
+  #table(
+    columns: 3, gutter: 2em, stroke: 0pt, align: horizon,
     [$#I = mat(
       1,0,0,0,0;
       0,1,0,0,0;
@@ -653,7 +668,8 @@ This would be $(h_0, m_1, y_1, m_2, y_2)$.
 In this basis (we switched $y_1$ and $m_2$) we have:
 
 #align(center)[
-  #table(columns: 3, gutter: 2em,stroke:0pt,align:horizon,
+  #table(
+    columns: 3, gutter: 2em, stroke: 0pt, align: horizon,
     [$#I = mat(
       1,0,0,0,0;
       0,1,0,0,0;
@@ -679,7 +695,8 @@ Here the basis change idea really shines,
 because it helps to simplify the algebraic representation.
 
 #align(center)[
-  #table(columns: 3, gutter: 2em,stroke:0pt,align:horizon,
+  #table(
+    columns: 3, gutter: 2em, stroke: 0pt, align: horizon,
     [$#I = mat(
       1,0,0,0,0;
       0,1,0,0,0;
@@ -1543,10 +1560,24 @@ Detecting a loop or anything in similar style seems to be easy to check.
 - Formal conferences is TCC and Eurocrypt
   - TCC in deadline in May probably
   - Crypto is usually more real application focused, would need to find a really good application for that
-  
+
 == Meeting 12.04.2024
 - Updates: Reworked proofs of Unsolvability and of its CR corollary.
 - What do you think of the strategy to define events and implications? Is that a good proof style here?
+
+- TODOs Frederik:
+  - Handle the complexity cleanly. Say that $FF$ is implicitly $FF_lambda$
+  - Use $V$ instead of $Vp$ and make clear that all definitions are for any finite vectorspace over $FF$.
+  - Make meaning of the theorems clear and work through applications
+
+== Meeting 18.12.2024
+- I added the ability to the adversary to exploit fixed points in $E, D$.
+  - If the attacker knows some fixed point for, i.e. $(xx, kk, yy)$ is solvable iff $kk in.not Fixing$ and $xx = yy in.not Fixing + span(kk)$ then all 20 stay CR
+  - If for any key the attacker knows a fixed point, i.e. $xx = yy in.not Fixing + span(kk)$ then two of the schemes marked "✓" are insecure.
+    This includes Miyaguchi-Preneel.
+  - If for any plaintext the attacker knows a key so that it is a fixed point, i.e. $xx = yy$ and $kk in.not Fixing$ then 4 of the 8 "B" and "c" schemes become insecure
+  - Interestingly, all 8 schemes marked as "FP" in PGV stay secure no matter what fixed point capabilities regarding $E, D$ we give the attacker.
+    PGV defines the "FP" schemes as those for which fixed points can be found in the compression function $f$, not in the block cipher.
 
 = Next steps
 
@@ -1589,7 +1620,7 @@ Now we define the concept of an oracle constraint.
 This definition can then be satisfied by different types of constraints like a random oracle constraint or an ideal cipher constraint.
 
 #definition("Random oracle constraint")[
-  Let $H$ be an instance of a random oracle.
+  Let $H$ be an instance of a random oracle and $V$ a finite dimensional vector space over $FF$.
   A random oracle constraint $c$ in $Vp$ for $H$ is a tuple $(qq_1, ..., qq_k, aa)$ where $qq_1, ..., qq_k$ and $aa$ are dual vectors in $Vd$.
   We also write $qq_1, ..., qq_k |-> aa$ for it.
 
@@ -1598,6 +1629,11 @@ This definition can then be satisfied by different types of constraints like a r
   The set of all these vectors is denoted by $solH(c)$.
   Explicitly $solH(c) := {vv in Vp | H(qq_1, vv, ..., qq_k vv) = aa vv}$.
   This defines the solution function for random oracle constraints $solH$ mapping constraints to subsets of $Vp$.
+
+  TODO find a better name for $"Query"_H$.
+  We define the query space $"Query"_H$ to be $FF^k times FF$.
+  If $c = qq_1, ..., qq_k |-> aa$ is a random oracle constraint in $Vp$ for $H$ and $vv$ a vector in $Vp$ then we also use
+  the symbol $c$ for the function $c: Vp -> "Query"_H$ by $c vv = (qq_1 vv, ..., qq_k vv, aa vv)$.
 ]
 
 If it is clear from context about what oracle and what state space we are talking about we will drop these terms from the notation.
@@ -1615,6 +1651,10 @@ the set $solH(c)$ can be understood geometrically as a graph in $Vp$ over the pl
   In this case we also say $v$ solves $c$.
   The set of such vectors is denoted by $solE(c)$.
   This defines the solution function for ideal cipher constraints $solE$ mapping constraints to subsets of $Vp$.
+
+  We define the query space $"Query"_E$ to be $FF times FF times FF$.
+  If $c = xx <-->^(#move(dy: 1.7pt, kk)) yy$ is an ideal cipher constraint in $Vp$ for $E$ and $vv$ a vector in $Vp$ then we also use
+  the symbol $c$ for the function $c: Vp -> "Query"_E$ by $c vv = (xx vv, kk vv, yy vv)$.
 ]
 
 Assume we have a set of constraints $CC = {c_1, ..., c_n}$ where $c_i$ is a constraint for the oracle $Ora_i$.
@@ -1644,6 +1684,12 @@ For the second example consider $CC = {qq |-> aa, aa |-> qq}$.
 We can find a solution to one of the two constraints,
 but it becomes hard to find a solution to both of them at the same time.
 
+
+TODO could we not also drop the $lambda$ here, and only add it later when considering complexity?
+Then afterwards we can see $SolAdv$ as a function from $lambda -> RR$.
+Counter argument: But we need to measure $SolAdv$ for a specific construction $CC$.
+This $CC$ needs to be defined for each $lambda$.
+This means $lambda$ needs to be part of constraint definition.
 #definition("Solvability game")[
   Let #CC be a set of constraints with solution function $sol$ over a family of fields $FF_lambda$.
   Let $Fixing$ be a subset of $Vd$ and $W$ be a subset of $Vp$.
@@ -1753,7 +1799,7 @@ and derive a method to construct a successful adversary against a $SolGame$ that
   // TODO consider using this
   // $Fixing' = Vd - aa$.
   // TODO is this well defined? There are many possible d-1 dimensional subspaces of $Vd$ without $aa$.
-  // I think this is not a clearer notation 
+  // I think this is not a clearer notation
 
   This is possible because $aa$ is assumed to be outside of $Fixing + span(qq_1\, ...\, qq_k)$.
   We choose a basis of $Fixing'$ and we call it
@@ -1862,7 +1908,7 @@ If $c = xx <-->^(#move(dy: 1.7pt, kk)) yy$ then $span(c) := span(xx\, kk\, yy)$.
   This means that condition 2. is fulfilled.
 
   Condition 3. is almost always fulfilled.
-  If to the contrary $vv = 0$ we would have 
+  If to the contrary $vv = 0$ we would have
   $xx in (Fixing_0)^0$ and each of the $n$ oracle calls being 0.
   The probability of both is bounded from above by $1/(|FF|^(n + k))$ if $k$ is the dimension of $Fixing_0$.
   The space $Fixing_0$ could have been expanded to be of dimension $d - n$ without affecting the previous argument,
@@ -2270,3 +2316,68 @@ Then $(vv_1, vv_2) in S$ is equivalent to $vv_1 = vv_2$.
   Therefore the probability that $H(q_1, ..., q_k) = aa vv$ is equal to $1 / (|FF|)$.
   This is the contradiction we needed to prove that $CC$ is indeed solvable outside of $W$.
 ]
+
+== Applications
+#remark("Note for Bruce and Zahra")[
+  This is just an idea, it doesn't have to include this
+]
+
+We apply this generalized Linicryp framework to the Merkle damgard construction from ideal ciphers.
+
+=== Categorization of PGV compression functions
+
+TODO
+
+=== Fixed points
+We extend the ideal cipher linicrypt description to allow an attacker to use knowledge of fixed points.
+Consider the block cipher $E$.
+We already have access to $E^(-1): Vp times Vp -> Vp$ with the property $E(k, E^(-1)(k, x)) = x$
+We extend this model by assuming there is another oracle $FP: Vp -> Vp$ with the property $E(k, FP(k)) = FP(k)$.
+
+This gives the adversary an additional power to solve constraints.
+We model this by adding to the solvability condition the following:
+$c = (xx, kk, xx)$ is also called solvable fixing $Fixing$ if $xx in.not Fixing + span(kk)$.
+One can check that the proof for the attack side still holds, i.e. $CC$ solvable fixing $Fixing$ implies that there is an attack on $SolGame(CC, Fixing, 0)$.
+An adversary needs to have acces to the oracl $FP$.
+In its final step, we have a constraint $c_i$ that is unsolvable fixing $Fixing_(i-1)$ but the adversary finds a solution to it.
+Now we might have the additional case: $c_i = (xx, kk, xx)$ and $xx in Fixing_(i-1) + span(kk)$.
+The fixed point is therefore already fixed from previously known values.
+But $FP(kk)$ is a fresh query and therefore random.
+The probabilty of the answer being exactly what was expected is very low.
+TODO this is not completely honest. One edge case is for example, what if we found a fixed point by chance beforehand, so this query is not really fresh... But for the attack side it's not relevant anyways.
+
+We can apply the #ref(<corollary-collisions>) to get a characterization for collision resistance in this oracle model.
+By applying the algorithm from the previous section (big TODO, but the python script seems to work),
+we have found the following attack on the Miyaguchi-Preneel compression function $f(h,m) = E(h, m) + h + m$.
+This attack only works if the field $FF$ has characteristic 2.
+
+#pseudocode-list(
+  booktabs: true,
+  booktabs-stroke: 1pt + black,
+  line-numbering: "1",
+  title: [$H^2_f (h_0, m_1, m_2)$],
+)[
++ $h_1 = f(h_0, m_1)$
++ $h_2 = f(h_1, m_2)$
++ *return* $(h_0, h_2)$
+]
+
+The IV is passed in and returned in order to model constants in Linicrypt.
+Let IV be some value.
+Chose $x$ at random.
+$
+  (m_1, m_2) &= (x, FP(E("IV", x) + "IV" + x)) \
+  (m'_1, m'_2) &= (op("FP") ("IV"), x) \
+$
+
+We calculate $H^2_f ("IV", m_1, m_2)$:
+$
+  h_1 = E("IV", x) + "IV" + x \
+  h_2 = E(h_1, FP(h_1)) + h_1 + FP(h_1) = FP(h_1) + h_1 + FP(h_1) = E("IV", x) + "IV" + x
+$
+
+We calculate $H^2_f ("IV", m'_1, m'_2)$:
+$
+  h'_1 = E("IV", FP("IV")) + "IV" + FP("IV") = "IV"\
+  h'_2 = E(h'_1, x) + h'_1 + x = E("IV", x) + "IV" + x = h_2
+$

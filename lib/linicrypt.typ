@@ -22,8 +22,10 @@
 #let P = $cal("P")$
 #let PP = $cal("P")$
 #let Fixing = $cal("F")$
-#let Vp = $bb("F")^d$
-#let Vd = $(bb("F")^d)^*$
+// #let Vp = $bb("F")^d$
+// #let Vd = $(bb("F")^d)^*$
+#let Vp = $V$
+#let Vd = $V^*$
 
 #let Cjoin = $cal("C")_"join"$
 
@@ -39,6 +41,9 @@
 #let SolGame = $sans("SolGame")$
 
 #let MD = "Merkle Dåmgard"
+
+// custom crypto
+#let FP = $"FP"$
 
 // matrix stuff
 #let vv = $bold(v)$
