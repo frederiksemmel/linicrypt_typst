@@ -2351,26 +2351,90 @@ By applying the algorithm from the previous section (big TODO, but the python sc
 we have found the following attack on the Miyaguchi-Preneel compression function $f(h,m) = E(h, m) + h + m$.
 This attack only works if the field $FF$ has characteristic 2.
 
+This is how we chose to represent #MD in Linicrypt.
+The IV is passed in and returned in order to model constants in Linicrypt.
+In this model the adversary is allowed to choose the IV.
+From the resulting attack we see that this capability is not neccessary in this particular case.
 #pseudocode-list(
   booktabs: true,
   booktabs-stroke: 1pt + black,
   line-numbering: "1",
   title: [$H^2_f (h_0, m_1, m_2)$],
 )[
-+ $h_1 = f(h_0, m_1)$
-+ $h_2 = f(h_1, m_2)$
-+ *return* $(h_0, h_2)$
+  + $h_1 = f(h_0, m_1)$
+  + $h_2 = f(h_1, m_2)$
+  + *return* $(h_0, h_2)$
+]
+We can use the basis variables $(h_0, m_1, h_1, m_2, h_2)$ to get the representation
+#align(center)[
+  #table(
+    columns: 3, gutter: 2em, stroke: 0pt, align: horizon,
+    [$#I = mat(
+      1,0,0,0,0;
+      0,1,0,0,0;
+      0,0,0,1,0;
+    )$],
+    [$#O = mat(1,0,0,0,0;0,0,0,0,1)$.],
+    // [$#C#T = {
+    //   (mat(e,f,0), mat(c,d,0), mat(0,0,1)),
+    //   (mat(e,f,0), mat(c,d,0), mat(0,0,1))
+    // }$],
+    $#C = mat(delim:"{",
+      icc(mat(0,1,0,0,0), mat(1,0,0,0,0), mat(1,1,1,0,0));
+      icc(mat(0,0,0,1,0), mat(0,0,1,0,0), mat(0,0,1,1,1));
+    )$
+  )
 ]
 
-The IV is passed in and returned in order to model constants in Linicrypt.
-Let IV be some value.
-Chose $x$ at random.
+The program computes a solvable space $W$ outside of $S$ for the constraints $Cjoin$:
 $
-  (m_1, m_2) &= (x, FP(E("IV", x) + "IV" + x)) \
-  (m'_1, m'_2) &= (op("FP") ("IV"), x) \
+  W = mat(
+    1,0,0,0,0;
+    0,0,1,0,0;
+    0,0,0,1,0;
+    0,0,1,0,1;
+    0,0,0,1,0;
+    1,0,0,0,0;
+    0,1,0,0,0;
+    1,0,0,0,0;
+    0,0,1,0,0;
+    0,0,0,1,0;
+  )
 $
 
-We calculate $H^2_f ("IV", m_1, m_2)$:
+The solution is:
+$
+  fs Cjoin = mat(delim: "{",
+  icc(mat(0,0,1,0,0), mat(1,0,0,0,0), mat(1,0,1,1,0));
+  icc(mat(0,0,1,0,1), mat(0,0,0,1,0), mat(0,0,1,0,1));
+  icc(mat(0,1,0,0,0), mat(1,0,0,0,0), mat(0,1,0,0,0));
+  )
+$
+
+Note, that constrains 2 and 3 in $fs Cjoin$ are solved by choosing a fixed point.
+From the solution we can derive that $"IV" := e_1 ww$ and $x := e_3 ww$ can be chosen arbitrarily.
+A solution to $fs Cjoin$ can be parametrized as
+$
+  ww = mat(
+  "IV";
+  FP("IV");
+  x;
+  E("IV", x) - "IV" - x;
+  FP(E("IV", x) - "IV" - x) - x;
+  )
+$
+
+Any solution to $fs Cjoin$ can be mapped via $f$ to a solution of $Cjoin$.
+Therefore collisions $vv_1, vv_2 in Vp$ are constructed as $f(ww) =: mat(vv_1; vv_2)$ for a solution $ww in sol(fs Cjoin)$.
+Let $Proj_1, Proj_2$ be the left and right projection maps.
+
+Chose IV and $x$ at random.
+$
+  (h_0, m_1, m_2) := II Proj_1 f(ww) &= ("IV", x, FP(E("IV", x) + "IV" + x)) \
+  (h_0, m'_1, m'_2) := II Proj_2 f(ww) &= ("IV", FP("IV"), x) \
+$
+
+To double check, we calculate $H^2_f ("IV", m_1, m_2)$:
 $
   h_1 = E("IV", x) + "IV" + x \
   h_2 = E(h_1, FP(h_1)) + h_1 + FP(h_1) = FP(h_1) + h_1 + FP(h_1) = E("IV", x) + "IV" + x
