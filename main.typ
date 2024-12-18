@@ -2331,8 +2331,8 @@ TODO
 === Fixed points
 We extend the ideal cipher linicrypt description to allow an attacker to use knowledge of fixed points.
 Consider the block cipher $E$.
-We already have access to $E^(-1): Vp times Vp -> Vp$ with the property $E(k, E^(-1)(k, x)) = x$
-We extend this model by assuming there is another oracle $FP: Vp -> Vp$ with the property $E(k, FP(k)) = FP(k)$.
+We already have access to $E^(-1): FF times FF -> FF$ with the property $E(k, E^(-1)(k, x)) = x$
+We extend this model by assuming there is another oracle $FP: FF -> FF$ with the property $E(k, FP(k)) = FP(k)$.
 
 This gives the adversary an additional power to solve constraints.
 We model this by adding to the solvability condition the following:
